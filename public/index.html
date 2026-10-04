@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>هديتنا 💌</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Dancing+Script:wght@700&display=swap');
+:root{
+  --bg:#f2e4dc; --card:#fdf7f1; --card-soft:#f9ece4;
+  --ink:#5a4a42; --ink-soft:#8a746a;
+  --pink:#f3d3cb; --pink-deep:#e9b8ad;
+  --tan:#c98a6b; --tan-deep:#b3765a;
+  --env:#dcbb97; --env-flap:#cfa87f;
+  --shadow:0 10px 30px rgba(120,80,60,.12);
+  --radius:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Cairo','Geeza Pro',sans-serif;background:var(--bg);color:var(--ink);
+  overflow-x:hidden;min-height:100dvh}
+h1,h2,h3{font-weight:700}
+button{font-family:inherit;border:none;cursor:pointer}
+input,textarea{font-family:inherit}
+
+.heart-fall{position:fixed;top:-4vh;z-index:1;pointer-events:none;user-select:none;
+  animation:fall linear forwards;filter:saturate(.85) opacity(.85)}
+@keyframes fall{0%{transform:translateY(-6vh) rotate(-12deg)}100%{transform:translateY(110vh) rotate(14deg)}}
+@media (prefers-reduced-motion: reduce){.heart-fall{display:none}}
+
+#lockScreen{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);flex-direction:column;gap:26px;padding:24px;overflow:hidden;
+  transition:opacity .8s ease,visibility .8s}
+#lockScreen.hidden{opacity:0;visibility:hidden}
+.envelope{position:relative;width:min(390px,calc(100vw - 48px));aspect-ratio:16/10;background:var(--env);
+  border-radius:14px;box-shadow:var(--shadow);cursor:pointer;z-index:2;perspective:900px;
+  transform-style:preserve-3d;will-change:transform;
+  transition:transform .9s cubic-bezier(.22,.8,.25,1),opacity .45s ease}
+.envelope:not(.open){animation:envelopeInvite 2.15s ease-in-out infinite}
+@keyframes envelopeInvite{
+  0%,24%,74%,100%{transform:translateX(0) rotate(0)}
+  34%{transform:translateX(-8px) rotate(-1.8deg)}
+  44%{transform:translateX(8px) rotate(1.8deg)}
+  54%{transform:translateX(-5px) rotate(-1deg)}
+  64%{transform:translateX(5px) rotate(1deg)}
+}
+.envelope:not(.open):hover{animation-duration:1.8s}
+.envelope .flap{position:absolute;inset:0 0 auto 0;height:58%;background:var(--env-flap);
+  clip-path:polygon(0 0,100% 0,50% 100%);border-radius:14px 14px 0 0;
+  transform-origin:top center;transform-style:preserve-3d;
+  transition:transform .88s cubic-bezier(.3,.02,.18,1),filter .45s ease;z-index:8;
+  backface-visibility:visible;filter:drop-shadow(0 3px 2px rgba(113,73,52,.08))}
+.envelope .flap::after{content:'';position:absolute;inset:0;
+  clip-path:polygon(0 0,100% 0,50% 100%);background:linear-gradient(180deg,#e2c3a4,#d4ad86);
+  transform:rotateX(180deg) translateZ(1px);backface-visibility:hidden}
+.envelope.open .flap{transform:rotateX(180deg) translateZ(2px);filter:drop-shadow(0 -4px 5px rgba(113,73,52,.12))}
+.envelope.flap-opened .flap{z-index:1;filter:none}
+.envelope .body-lines{position:absolute;inset:0;border-radius:14px;background:
+  linear-gradient(135deg,transparent 49.6%,rgba(255,255,255,.25) 50%,transparent 50.4%),
+  linear-gradient(225deg,transparent 49.6%,rgba(255,255,255,.25) 50%,transparent 50.4%)}
+.envelope-sheet-preview{position:absolute;left:8%;right:8%;bottom:14%;height:74%;z-index:2;
+  border:1px solid rgba(115,83,65,.12);border-radius:4px 5px 2px 3px;
+  background:
+    radial-gradient(circle at 14% 12%,rgba(156,113,79,.055) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 78% 38%,rgba(156,113,79,.04) 0 1px,transparent 1.4px),
+    linear-gradient(104deg,#fffdf8 0%,#f8efe3 52%,#fffaf2 100%);
+  box-shadow:0 -5px 12px rgba(90,55,38,.08);opacity:0;
+  transform:translateY(40%) scaleX(.9) rotateX(4deg);transform-origin:center bottom;
+  transition:transform 1.05s cubic-bezier(.15,.84,.24,1) .66s,opacity .22s ease .58s}
+.envelope-sheet-preview span{position:absolute;left:15%;right:15%;top:25%;height:42%;opacity:.34;
+  background:repeating-linear-gradient(to bottom,transparent 0 13px,rgba(126,88,68,.2) 14px 15px)}
+.envelope.open .envelope-sheet-preview{opacity:1;transform:translateY(-84%) scaleX(.97) rotateX(-2deg)}
+.envelope-pocket{position:absolute;inset:34% 0 0;z-index:4;border-radius:0 0 14px 14px;
+  clip-path:polygon(0 0,50% 48%,100% 0,100% 100%,0 100%);
+  background:
+    linear-gradient(135deg,transparent 49.5%,rgba(255,255,255,.22) 50%,transparent 50.5%),
+    linear-gradient(225deg,transparent 49.5%,rgba(255,255,255,.22) 50%,transparent 50.5%),
+    linear-gradient(180deg,#dfbf9d,#d5af87)}
+.envelope .seal{position:absolute;left:50%;top:61%;transform:translate(-50%,-50%);z-index:11;
+  width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e2907e,#b95f4b);
+  display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;
+  box-shadow:0 4px 10px rgba(120,60,40,.35);
+  transition:opacity .32s ease .04s,transform .38s cubic-bezier(.2,.8,.2,1) .04s}
+.envelope.open .seal{opacity:0;transform:translate(-50%,-50%) scale(.68)}
+.envelope .script{position:absolute;top:58px;left:18px;right:18px;padding-inline:42px;text-align:center;z-index:10;
+  font-family:'Cairo',sans-serif;font-size:clamp(25px,3vw,31px);line-height:1.2;font-weight:700;color:#76513f;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .22s ease}
+.envelope .mini{position:absolute;top:27px;left:0;right:0;text-align:center;z-index:10;
+  font-size:11px;letter-spacing:1.8px;color:#8f6f57;transition:opacity .22s ease}
+.envelope.open .script,.envelope.open .mini{opacity:0}
+.envelope.open{cursor:default}
+#lockScreen.letter-reading .envelope{transform:translateY(min(29vh,190px)) scale(.88)}
+#lockScreen.password-step .envelope{transform:translateY(-24px) scale(.78);opacity:.58;pointer-events:none}
+.tapHint{color:var(--ink-soft);font-size:14px;letter-spacing:1px}
+.secretBox{display:none;flex-direction:column;align-items:center;gap:14px;width:min(320px,84vw)}
+.secretBox.show{display:flex;animation:rise .6s ease}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.secretLabel{width:100%;color:var(--ink-soft);font-size:clamp(9px,2.7vw,11px);font-weight:700;
+  line-height:1.5;letter-spacing:.32em;text-align:center;direction:ltr;white-space:nowrap}
+.secretBox input{width:100%;padding:13px 16px;border-radius:999px;border:1.5px solid #e6cfc4;
+  background:#fffdfb;text-align:center;font-size:16px;color:var(--ink);outline:none}
+.secretBox input:focus{border-color:var(--tan)}
+.unlockBtn{background:linear-gradient(180deg,var(--tan),var(--tan-deep));color:#fff;
+  padding:12px 34px;border-radius:999px;font-size:16px;box-shadow:0 6px 14px rgba(179,118,90,.35)}
+.unlockBtn:active{transform:scale(.96)}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.hint{font-size:13px;color:#b3765a;min-height:18px}
+
+#letterOverlay{position:fixed;inset:0;z-index:55;display:none;align-items:center;justify-content:center;
+  background:transparent;padding:22px 22px 96px;pointer-events:none;perspective:1200px}
+#letterOverlay.show{display:flex}
+#letterOverlay.editor-view{z-index:65;background:rgba(242,228,220,.96);padding:16px;
+  pointer-events:auto;perspective:none}
+body.letter-editor-open{overflow:hidden}
+body.letter-editor-open .heart-fall{display:none}
+.letterCard{position:relative;border:1px solid rgba(111,76,56,.13);border-radius:5px 3px 6px 4px;
+  background:
+    radial-gradient(circle at 9% 13%,rgba(132,91,65,.055) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 83% 22%,rgba(132,91,65,.045) 0 1px,transparent 1.4px),
+    radial-gradient(circle at 38% 81%,rgba(132,91,65,.04) 0 1px,transparent 1.5px),
+    linear-gradient(102deg,#fffdf8 0%,#fbf4e9 48%,#fffaf2 100%);
+  box-shadow:0 28px 60px rgba(94,58,40,.22),0 5px 15px rgba(94,58,40,.12),inset 0 0 34px rgba(147,107,77,.035);
+  width:min(430px,92vw);min-height:340px;max-height:min(72dvh,640px);padding:38px 26px 26px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:18px;
+  overflow:hidden;pointer-events:auto;transform-origin:center bottom;backface-visibility:hidden;
+  animation:letterOut 1.35s cubic-bezier(.17,.82,.27,1) both}
+.letterCard::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.48;
+  background:
+    repeating-linear-gradient(7deg,transparent 0 9px,rgba(117,77,52,.018) 10px 11px),
+    linear-gradient(90deg,rgba(145,102,72,.04),transparent 10%,transparent 88%,rgba(145,102,72,.045))}
+.letterCard::after{content:'';position:absolute;left:0;right:0;top:37%;height:18px;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(117,77,52,.055),rgba(255,255,255,.2),transparent);
+  opacity:.45;transform:skewY(-.4deg)}
+.letterCard>*{position:relative;z-index:1}
+#letterOverlay:not(.editor-view) .letterCard>*{animation:paperInkReveal .58s ease .7s both}
+#letterOverlay.editor-view .letterCard{animation:none;transform:none;width:min(480px,100%);
+  min-height:0;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;
+  justify-content:flex-start;gap:12px}
+#letterOverlay.editor-view .letterCard>*{animation:none}
+#letterOverlay.editor-view .letterEmoji{flex-shrink:0}
+#letterOverlay.editor-view .letterEditWrap{flex-shrink:0;animation:none}
+@keyframes letterOut{
+  0%{opacity:.88;transform:translateY(43vh) scaleX(.7) scaleY(.2) rotateX(68deg) rotateZ(-2.6deg)}
+  28%{opacity:1;transform:translateY(29vh) scaleX(.77) scaleY(.48) rotateX(43deg) rotateZ(-1.8deg)}
+  58%{transform:translateY(8vh) scaleX(.9) scaleY(.82) rotateX(13deg) rotateZ(.8deg)}
+  78%{transform:translateY(-9vh) scaleX(1.015) scaleY(1.02) rotateX(-2deg) rotateZ(-.35deg)}
+  100%{opacity:1;transform:translateY(-7vh) scale(1) rotateX(0) rotateZ(0)}
+}
+@keyframes paperInkReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.letterPen{position:absolute;top:12px;inset-inline-start:14px;width:36px;height:36px;border-radius:50%;
+  background:#fffdfb;border:1.5px solid #eed9cf;color:var(--tan-deep);font-size:14px}
+.letterEmoji{font-size:34px}
+.letterText{font-size:18px;line-height:2.2;text-align:center;color:var(--ink);white-space:pre-wrap;
+  min-height:120px;overflow-y:auto;overscroll-behavior:contain;padding:0 3px}
+.caret{display:inline-block;width:2px;height:1.1em;background:var(--tan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.nextBtn{background:var(--pink);color:#7d5347;padding:9px 26px;border-radius:999px;font-size:15px;
+  box-shadow:0 4px 10px rgba(180,120,100,.18)}
+.nextBtn:active{transform:scale(.96)}
+.letterEditWrap{display:none;width:100%}
+.letterEditWrap.show{display:block;animation:rise .4s ease}
+.letterEmojiEditLabel{display:block;margin:0 0 6px;color:var(--tan-deep);font-size:12.5px;text-align:center}
+.letterEmojiInput{width:100%;margin-bottom:10px;border:1.5px solid #eed9cf;border-radius:14px;
+  background:#fffdfb;color:var(--ink);padding:8px 12px;text-align:center;font-size:24px;outline:none}
+.letterEmojiInput:focus{border-color:var(--tan)}
+.letterEditWrap textarea{width:100%;min-height:150px;border:1.5px dashed var(--tan);border-radius:14px;
+  background:#fffdfb;padding:12px;font-size:16px;line-height:2;resize:vertical;outline:none;text-align:center}
+.letterTools{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.ltBtn{border-radius:999px;padding:8px 18px;font-size:14px}
+.ltSave{background:linear-gradient(180deg,var(--tan),var(--tan-deep));color:#fff}
+.ltAdd{background:var(--pink);color:#7d5347}
+.ltDel{background:#fbeae4;color:#b3564b}
+.ltMove{background:#fffdfb;color:var(--tan-deep);border:1px solid #eed9cf}
+.ltMove:disabled{opacity:.42;cursor:not-allowed}
+.ltDone{width:100%;margin-top:10px;background:#765548;color:#fff}
+.pageInd{font-size:12.5px;color:var(--ink-soft);margin-top:9px;text-align:center}
+.letterSaveStatus{min-height:24px;margin-top:10px;font-size:13px;text-align:center;color:var(--tan-deep)}
+.ltBtn:disabled{opacity:.5;cursor:not-allowed}
+
+#main{position:relative;z-index:2;display:none;max-width:520px;margin:0 auto;padding:34px 18px 120px}
+#main.show{display:block;animation:rise .8s ease}
+.hero{text-align:center;margin-bottom:26px}
+.hero .script{font-family:'Dancing Script',cursive;font-size:34px;color:#8a6a52}
+.hero h1{font-size:26px;margin-top:2px}
+.hero p{color:var(--ink-soft);font-size:14px;margin-top:6px}
+.section{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:22px 18px;margin-bottom:22px}
+.section.hiddenSec{display:none}
+.secTitle{text-align:center;font-size:17px;color:#7d5347;margin-bottom:16px}
+.secTitle .orn{color:var(--pink-deep)}
+
+.counterGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.counterBox{background:var(--card-soft);border-radius:16px;padding:14px 4px;text-align:center}
+.counterBox b{display:block;font-size:24px;color:#6d5148}
+.counterBox span{font-size:11px;color:var(--ink-soft)}
+.counterCap{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:14px}
+
+.tl-item{background:var(--card-soft);border-radius:16px;padding:13px 16px;text-align:center;
+  font-size:15px;margin-bottom:10px}
+.tl-date{display:inline-block;background:#fffdfb;border:1px solid #eed9cf;border-radius:999px;
+  padding:3px 14px;font-size:12.5px;color:var(--ink-soft);margin-top:8px}
+
+.msg{max-width:86%;padding:12px 15px;border-radius:18px;margin-bottom:12px;position:relative;
+  font-size:15px;line-height:1.9;box-shadow:0 3px 8px rgba(140,90,70,.08);animation:rise .4s ease}
+.msg .who{display:block;font-size:11.5px;margin-bottom:3px;opacity:.75}
+.msg.him{background:#f6e3d3;margin-left:auto;border-bottom-left-radius:6px}
+.msg.her{background:var(--pink);margin-right:auto;border-bottom-right-radius:6px}
+.msg .msgActions{position:absolute;top:7px;left:8px;display:flex;gap:4px}
+.msg .msgAction{min-width:28px;height:28px;padding:0 7px;border-radius:999px;background:rgba(255,253,251,.72);
+  color:var(--tan-deep);font-size:12px;border:1px solid rgba(183,118,88,.18)}
+.msg .msgAction.delete{color:#b3564b;background:rgba(251,234,228,.82)}
+.msg textarea{width:100%;border:1.5px dashed var(--tan);border-radius:10px;background:#fffdfb;
+  padding:8px;font-size:15px;line-height:1.8;resize:vertical;min-height:60px;outline:none}
+.msg .saveMini{margin-top:7px;background:var(--tan);color:#fff;border-radius:999px;padding:5px 16px;font-size:13px}
+.msgEditActions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.msgEditActions .saveMini{margin-top:7px}
+.msgEditActions .cancelMini,.msgEditActions .deleteMini{margin-top:7px;border-radius:999px;padding:5px 13px;font-size:13px}
+.msgEditActions .cancelMini{background:#fffdfb;color:var(--tan-deep);border:1px solid #eed9cf}
+.msgEditActions .deleteMini{background:#fbeae4;color:#b3564b}
+.composer{margin-top:16px;border-top:1.5px dashed #ecd6ca;padding-top:16px}
+.composer [hidden]{display:none}
+.messageSettings{margin-bottom:18px}
+.messageSettings .hint{text-align:center;margin-top:8px;line-height:1.8}
+.whoToggle{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+.whoToggle button{padding:7px 18px;border-radius:999px;background:#fffdfb;border:1.5px solid #eed9cf;
+  color:var(--ink-soft);font-size:14px}
+.whoToggle button.on{background:var(--tan);border-color:var(--tan);color:#fff}
+.composer textarea{width:100%;min-height:64px;border:1.5px solid #eed9cf;border-radius:14px;
+  background:#fffdfb;padding:11px;font-size:15px;line-height:1.8;resize:vertical;outline:none}
+.composer textarea:focus{border-color:var(--tan)}
+.sendBtn{display:block;margin:10px auto 0;background:linear-gradient(180deg,var(--tan),var(--tan-deep));
+  color:#fff;padding:9px 30px;border-radius:999px;font-size:15px}
+.sendBtn:active{transform:scale(.96)}
+
+.giftBoxWrap{display:flex;flex-direction:column;align-items:center}
+.giftBoxStage{position:relative;width:100%;height:245px;isolation:isolate;
+  transition:height .75s cubic-bezier(.2,.8,.25,1)}
+.giftBoxStage.open{height:445px}
+.giftBoxButton{position:absolute;left:50%;bottom:18px;width:230px;height:165px;transform:translateX(-50%);
+  background:transparent;overflow:visible;z-index:4;animation:boxNudge 1.35s ease-in-out infinite;
+  filter:drop-shadow(0 13px 12px rgba(118,75,55,.18))}
+.giftBoxButton::after{content:'اضغط هنا';position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);
+  color:var(--ink-soft);font:700 12px 'Cairo',sans-serif;white-space:nowrap;transition:opacity .3s}
+.giftBoxButton.open{animation:none}
+.giftBoxButton.open::after{opacity:0}
+@keyframes boxNudge{
+  0%,100%{transform:translateX(-50%) rotate(0)}
+  18%{transform:translateX(calc(-50% - 7px)) rotate(-2.2deg)}
+  36%{transform:translateX(calc(-50% + 7px)) rotate(2.2deg)}
+  54%{transform:translateX(calc(-50% - 4px)) rotate(-1.2deg)}
+  72%{transform:translateX(calc(-50% + 4px)) rotate(1.2deg)}
+}
+.giftBoxBase{position:absolute;left:50%;bottom:0;width:210px;height:118px;transform:translateX(-50%);
+  border-radius:10px 10px 18px 18px;background:linear-gradient(135deg,#d99583,#c87866);
+  border:2px solid rgba(128,65,52,.14);overflow:hidden}
+.giftBoxBase::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:42px;transform:translateX(-50%);
+  background:linear-gradient(90deg,#f3d7b6,#ffe8ca,#eabf91)}
+.giftBoxBase::after{content:'❤';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  color:#b96858;font-size:25px}
+.giftBoxLid{position:absolute;left:50%;top:22px;width:228px;height:45px;transform:translateX(-50%);
+  transform-origin:18% 85%;border-radius:11px;background:linear-gradient(135deg,#e4a392,#cf7d6b);
+  border:2px solid rgba(128,65,52,.14);transition:transform .8s cubic-bezier(.2,.9,.25,1),opacity .6s;z-index:3}
+.giftBoxLid::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:46px;transform:translateX(-50%);
+  background:linear-gradient(90deg,#f3d7b6,#ffe8ca,#eabf91)}
+.giftBoxButton.open .giftBoxLid{transform:translate(-62%,-54px) rotate(-24deg);opacity:.9}
+.giftPhoto{position:absolute;left:50%;bottom:91px;width:min(304px,calc(100vw - 54px));max-height:380px;
+  transform:translate(-50%,92px) scale(.66) rotate(-3deg);opacity:0;z-index:2;
+  border:9px solid #fffdfb;border-bottom-width:12px;border-radius:13px;background:#fffdfb;
+  box-shadow:0 16px 38px rgba(105,67,52,.2);overflow:hidden;
+  transition:transform 1s cubic-bezier(.16,.86,.3,1) .22s,opacity .35s ease .28s}
+.giftBoxStage.open .giftPhoto{transform:translate(-50%,-14px) scale(1) rotate(0);opacity:1;z-index:5}
+.giftPhoto .memImg{width:100%;aspect-ratio:4/4.2;object-fit:cover;display:block;border-radius:6px;background:
+  linear-gradient(150deg,#f3d9c9,#e9c4b2 55%,#dfb39f)}
+.giftPhoto .memImg.ph{display:flex;align-items:center;justify-content:center;flex-direction:column;
+  gap:8px;color:#a97f68;font-size:14px}
+.giftPhoto .memImg.ph i{font-style:normal;font-size:34px}
+.giftPhoto .memCap{padding:10px 8px 2px;text-align:center;font-size:15px;color:var(--ink);background:#fffdfb;
+  white-space:pre-wrap}
+.boxHeartBurst{position:absolute;inset:0;z-index:7;pointer-events:none;overflow:visible}
+.boxHeart{position:absolute;left:50%;bottom:145px;font-size:var(--heart-size);opacity:0;
+  animation:boxHeartPop 3s cubic-bezier(.12,.72,.18,1) forwards;animation-delay:var(--heart-delay)}
+@keyframes boxHeartPop{
+  0%{opacity:0;transform:translate(-50%,15px) scale(.35) rotate(0)}
+  12%{opacity:1}
+  72%{opacity:.9}
+  100%{opacity:0;transform:translate(calc(-50% + var(--heart-x)),var(--heart-y)) scale(1.15) rotate(var(--heart-r))}
+}
+.boxTools{margin-top:-2px}
+
+.memGrid{display:flex;flex-direction:column;gap:16px}
+.memCard{border-radius:18px;overflow:hidden;background:#fffdfb;
+  box-shadow:0 4px 12px rgba(140,90,70,.1);animation:rise .5s ease}
+.memCard .memImg{width:100%;aspect-ratio:4/4.6;object-fit:cover;display:block;background:
+  linear-gradient(150deg,#f3d9c9,#e9c4b2 55%,#dfb39f)}
+.memCard .memImg.ph{display:flex;align-items:center;justify-content:center;flex-direction:column;
+  gap:8px;color:#a97f68;font-size:14px}
+.memCard .memImg.ph i{font-style:normal;font-size:34px}
+.memCard .memCap{padding:11px 14px;text-align:center;font-size:15px;color:var(--ink);
+  background:#fffdfb;white-space:pre-wrap}
+.addMemBtn{width:100%;border:1.5px dashed var(--tan);background:transparent;color:var(--tan-deep);
+  border-radius:16px;padding:14px;font-size:15px;margin-top:16px;display:block}
+.memForm{display:none;margin-top:14px;border-top:1.5px dashed #ecd6ca;padding-top:14px}
+.memForm.show{display:block;animation:rise .4s ease}
+.memForm label.pick,.memTools label.pick,.songPick{display:flex;align-items:center;justify-content:center;gap:8px;
+  border:1.5px solid #eed9cf;border-radius:14px;background:#fffdfb;padding:12px;color:var(--ink-soft);
+  font-size:14.5px;cursor:pointer}
+.memForm input[type=file],.memTools input[type=file],.songPickInput{display:none}
+
+#playerBox{border-radius:16px;overflow:hidden;background:var(--card-soft);display:none}
+#playerBox.show{display:block}
+#playerBox iframe,#playerBox #ytp{width:100%;aspect-ratio:16/9;border:0;display:block}
+.songEmpty{background:var(--card-soft);border-radius:16px;padding:18px;text-align:center;
+  color:var(--ink-soft);font-size:14px;line-height:1.9}
+#nativeAudio{width:100%;display:none;margin-top:12px}
+#nativeAudio.show{display:block}
+.songOpenLink{display:block;text-align:center;margin-top:12px;font-size:14px;color:var(--tan-deep);
+  text-decoration:none;font-weight:700}
+.orDiv{display:flex;align-items:center;gap:10px;color:var(--ink-soft);font-size:12.5px;margin:14px 0 4px}
+.orDiv::before,.orDiv::after{content:'';flex:1;height:1px;background:#ecd6ca}
+.eNote{font-size:12px;color:var(--ink-soft);margin-top:8px;text-align:center;line-height:1.8}
+.checkRow{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;
+  font-size:14px;color:var(--ink-soft);cursor:pointer}
+.checkRow input{width:18px;height:18px;accent-color:var(--tan)}
+
+#editFab{position:fixed;top:max(14px,env(safe-area-inset-top));inset-inline-end:14px;z-index:60;display:none;
+  background:#fffdfb;border:1.5px solid #eed9cf;color:var(--tan-deep);
+  padding:8px 16px;border-radius:999px;font-size:14px;box-shadow:var(--shadow)}
+#editFab.show{display:block}
+#editFab.on{background:var(--tan);border-color:var(--tan);color:#fff}
+body.edit-button-after-song #editFab{position:static;inset:auto;z-index:2;width:100%;
+  margin:0;padding:12px 18px;font-size:15px}
+#editPrompt{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+  background:rgba(90,74,66,.25);backdrop-filter:blur(3px);padding:22px}
+#editPrompt.show{display:flex}
+.editPromptCard{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  width:min(340px,90vw);padding:26px 22px;display:flex;flex-direction:column;gap:12px;
+  align-items:center;animation:rise .4s ease}
+.editPromptCard h3{font-size:16px;color:#7d5347}
+.editPromptCard p{font-size:12.5px;color:var(--ink-soft);text-align:center}
+.editPromptCard input{width:100%;padding:11px 14px;border-radius:999px;border:1.5px solid #e6cfc4;
+  background:#fffdfb;text-align:center;font-size:15px;outline:none}
+.editPromptCard input:focus{border-color:var(--tan)}
+body.editing .section{outline:1.6px dashed var(--tan);outline-offset:5px}
+.eForm{display:none;margin-top:14px;border-top:1.5px dashed #ecd6ca;padding-top:14px}
+body.editing .eForm{display:block;animation:rise .4s ease}
+.eLabel{display:block;font-size:12.5px;color:var(--tan-deep);margin:8px 2px 5px}
+.eInput{width:100%;border:1.5px solid #eed9cf;border-radius:14px;background:#fffdfb;
+  padding:10px 12px;font-size:15px;outline:none;color:var(--ink)}
+.eInput:focus{border-color:var(--tan)}
+.eRow{display:flex;gap:8px}
+.eRow .eInput{flex:1;min-width:0}
+.editLetterBtn{width:100%;border:1.5px dashed var(--tan);background:transparent;color:var(--tan-deep);
+  border-radius:14px;padding:11px;font-size:14.5px;margin-top:10px}
+.tl-tools{display:none;margin-top:10px}
+body.editing .tl-tools{display:block}
+.delBtn{background:#fbeae4;color:#b3564b;border-radius:999px;padding:8px 18px;font-size:13.5px;margin-top:8px}
+.addTlBtn{width:100%;border:1.5px dashed var(--tan);background:transparent;color:var(--tan-deep);
+  border-radius:16px;padding:12px;font-size:14.5px;margin-top:6px;display:none}
+body.editing .addTlBtn{display:block}
+.memTools{display:none;width:100%;padding:12px 14px;background:#fdf3ec;border:1.5px dashed #ecd6ca;
+  border-radius:16px}
+body.editing .memTools{display:block}
+.memTools .eInput{margin-top:8px}
+
+@media (max-width:520px){
+  #lockScreen{gap:20px;padding:18px max(18px,env(safe-area-inset-left))}
+  .envelope{width:min(300px,calc(100vw - 54px));border-radius:12px}
+  .envelope .flap{height:55%;border-radius:12px 12px 0 0}
+  .envelope-pocket{border-radius:0 0 12px 12px}
+  .envelope .mini{top:17px;font-size:9px;letter-spacing:1.4px}
+  .envelope .script{top:40px;padding-inline:28px;font-size:clamp(22px,7vw,26px);line-height:1.25}
+  .envelope .seal{top:62%;width:50px;height:50px;font-size:22px}
+  .tapHint{font-size:13px;letter-spacing:.4px}
+  #lockScreen.letter-reading .envelope{transform:translateY(min(22vh,138px)) scale(.78)}
+  #lockScreen.password-step .envelope{transform:translateY(-16px) scale(.7)}
+  #letterOverlay{padding:16px 16px 54px}
+  .letterCard{width:calc(100vw - 32px);min-height:min(390px,70dvh);max-height:calc(100dvh - 88px);
+    padding:34px 20px 22px;gap:14px}
+  #letterOverlay:not(.editor-view) .letterCard{animation-name:letterOutMobile;animation-duration:1.15s}
+  @keyframes letterOutMobile{
+    0%{opacity:.9;transform:translateY(31vh) scaleX(.72) scaleY(.22) rotateX(64deg) rotateZ(-2deg)}
+    34%{opacity:1;transform:translateY(20vh) scaleX(.82) scaleY(.55) rotateX(34deg) rotateZ(-1deg)}
+    68%{transform:translateY(3vh) scaleX(.96) scaleY(.92) rotateX(5deg) rotateZ(.35deg)}
+    86%{transform:translateY(-3vh) scale(1.01) rotateX(-1deg)}
+    100%{opacity:1;transform:translateY(-2vh) scale(1) rotateX(0) rotateZ(0)}
+  }
+  .letterEmoji{font-size:30px}
+  .letterText{font-size:16px;line-height:2;min-height:105px}
+  .giftBoxStage{height:235px}
+  .giftBoxStage.open{height:445px}
+  .giftPhoto{width:min(306px,calc(100vw - 48px));max-height:380px}
+}
+@media (max-height:700px) and (min-width:521px){
+  #letterOverlay{padding-bottom:42px}
+  .letterCard{max-height:82dvh;min-height:300px}
+  #lockScreen.letter-reading .envelope{transform:translateY(32vh) scale(.76)}
+}
+@media (prefers-reduced-motion:reduce){
+  .envelope:not(.open){animation:none}
+  .giftBoxButton{animation:none}
+  .letterCard{animation:rise .25s ease}
+  #letterOverlay:not(.editor-view) .letterCard{animation:rise .25s ease}
+  #letterOverlay:not(.editor-view) .letterCard>*{animation:none}
+  .envelope-sheet-preview{transition-duration:.2s;transition-delay:0s}
+  .giftPhoto,.giftBoxLid{transition-duration:.2s}
+}
+
+#musicBar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:30;display:none;
+  width:min(480px,92vw);background:rgba(253,247,241,.92);backdrop-filter:blur(8px);
+  border-radius:999px;box-shadow:var(--shadow);padding:9px 16px;align-items:center;gap:12px}
+#musicBar.show{display:flex}
+.cover{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f0c2b2,#c98a6b);
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+#musicBar.playing .cover{animation:spin 5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.songMeta{flex:1;min-width:0}
+.songMeta b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.songMeta span{font-size:11px;color:var(--ink-soft)}
+.eq{display:flex;gap:2.5px;align-items:flex-end;height:16px;margin-inline-start:4px}
+.eq i{width:3px;background:var(--tan);border-radius:2px;height:4px}
+#musicBar.playing .eq i{animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.15s}.eq i:nth-child(3){animation-delay:.3s}.eq i:nth-child(4){animation-delay:.45s}
+@keyframes eq{50%{height:15px}}
+.playBtn{width:38px;height:38px;border-radius:50%;background:var(--tan);color:#fff;font-size:15px;flex-shrink:0}
+#orderCta{position:fixed;z-index:56;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;
+  width:min(340px,calc(100vw - 36px));min-height:52px;padding:12px 24px;border:1px solid rgba(255,255,255,.55);
+  border-radius:999px;background:linear-gradient(180deg,var(--tan),var(--tan-deep));color:#fff;
+  font-size:16px;font-weight:700;text-align:center;text-decoration:none;white-space:nowrap;
+  box-shadow:0 8px 22px rgba(120,75,54,.28);animation:orderCtaPulse 2.8s ease-in-out infinite}
+#orderCta:hover{filter:brightness(1.04)}
+#orderCta:active{transform:translateX(-50%) scale(.98)}
+#orderCta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@keyframes orderCtaPulse{0%,100%{box-shadow:0 8px 22px rgba(120,75,54,.25)}50%{box-shadow:0 9px 27px rgba(120,75,54,.4)}}
+@media (prefers-reduced-motion:reduce){#orderCta{animation:none}}
+.saveActions{position:fixed;bottom:100px;inset-inline:16px;z-index:110;max-width:520px;margin:auto;
+  background:var(--card);padding:14px;border:1px solid var(--tan);border-radius:18px;text-align:center;box-shadow:var(--shadow)}
+.saveActions button{margin:5px;padding:10px 16px;border-radius:18px;background:var(--tan);color:white}
+.saveActions[hidden],#saveConflict[hidden]{display:none}
+#saveConflict{position:fixed;inset:0;z-index:120;background:#5a4a4270;display:grid;place-items:center;padding:16px}
+.conflictCard{background:var(--card);border-radius:20px;padding:22px;width:min(100%,580px);max-height:90dvh;overflow:auto}
+.conflictCard pre{direction:rtl;white-space:pre-wrap;overflow-wrap:anywhere;max-height:170px;overflow:auto;background:white;padding:12px;margin:8px 0}
+.conflictCard button{padding:12px;margin:5px 0;border-radius:16px;background:var(--tan);color:white;width:100%}
+
+</style>
+</head>
+<body>
+<a id="orderCta" href="https://lovepage-swart-eight.vercel.app/#order-form">اطلب موقعك دلوقتي</a>
+
+<div id="lockScreen">
+  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="افتح الظرف" aria-expanded="false">
+    <div class="mini" id="envelopeTopText" dir="auto">A letter for</div>
+    <div class="script" id="envelopeName" dir="auto">❤</div>
+    <div class="flap"></div>
+    <div class="envelope-sheet-preview" aria-hidden="true"><span></span></div>
+    <div class="body-lines"></div>
+    <div class="envelope-pocket" aria-hidden="true"></div>
+    <div class="seal" id="envelopeEmoji" aria-hidden="true">❤</div>
+  </div>
+  <div class="tapHint" id="tapHint"></div>
+  <button class="ltBtn" id="retryInit" type="button" hidden>إعادة محاولة تحميل الهدية</button>
+  <div class="secretBox" id="secretBox">
+    <div class="secretLabel">ENTER THE SECRET WORD</div>
+    <input id="secretInput" type="text" autocomplete="off">
+    <button class="unlockBtn" id="unlockBtn"></button>
+    <div class="hint" id="hint"></div>
+  </div>
+</div>
+
+<div id="letterOverlay" aria-hidden="true" role="dialog" aria-label="رسالة الهدية">
+  <div class="letterCard">
+    <button class="letterPen" id="letterPen" title="تعديل كلام الجواب">✎</button>
+    <div class="letterEmoji" id="letterEmoji">😍</div>
+    <div class="letterText" id="letterView"><span id="letterText"></span><span class="caret" id="caret"></span></div>
+    <div class="letterEditWrap" id="letterEditWrap">
+      <label class="letterEmojiEditLabel" for="letterEmojiInput">✎ إيموجي الصفحة الحالية:</label>
+      <input class="letterEmojiInput" id="letterEmojiInput" maxlength="16" inputmode="text" placeholder="😍">
+      <textarea id="letterTa" maxlength="3000" aria-label="كلام الصفحة الحالية" placeholder="اكتبوا كلامكم هنا…"></textarea>
+      <div class="letterTools">
+        <button class="ltBtn ltMove" id="ltPrev">→ الصفحة السابقة</button>
+        <button class="ltBtn ltSave" id="ltSave">حفظ الصفحة ❤</button>
+        <button class="ltBtn ltMove" id="ltNextEdit">الصفحة التالية ←</button>
+        <button class="ltBtn ltAdd" id="ltAdd">＋ صفحة</button>
+        <button class="ltBtn ltDel" id="ltDel">🗑 حذف الصفحة</button>
+      </div>
+      <div class="pageInd" id="pageInd"></div>
+      <div class="letterSaveStatus" id="letterSaveStatus" role="status" aria-live="polite"></div>
+      <button class="ltBtn ltDone" id="ltDone">حفظ ومتابعة باقي التعديلات ←</button>
+    </div>
+    <button class="nextBtn" id="nextBtn">التالي ←</button>
+  </div>
+</div>
+
+<button id="editFab">✎ تعديل</button>
+<div class="saveActions" id="saveRecovery" hidden role="status">
+  <p id="saveRecoveryText"></p>
+  <button id="retryStorySave" type="button">إعادة محاولة الحفظ</button>
+  <button id="resumeStoryLogin" type="button" hidden>تسجيل الدخول مع الاحتفاظ بتعديلاتي</button>
+</div>
+<div id="saveConflict" hidden role="dialog" aria-modal="true" aria-labelledby="conflictTitle">
+  <div class="conflictCard">
+    <h3 id="conflictTitle">في تعديل من جهاز أو تبويب تاني</h3>
+    <p>التعديلين لمسوا نفس الجزء. راجع النسختين؛ باقي التعديلات المختلفة هتتجمع تلقائيًا.</p>
+    <p>تعديلاتي هنا:</p><pre id="conflictLocal"></pre>
+    <p>آخر نسخة محفوظة:</p><pre id="conflictRemote"></pre>
+    <button id="conflictKeepLocal" type="button">استخدم تعديلاتي في الأجزاء المتعارضة واحفظ</button>
+    <button id="conflictKeepRemote" type="button">استخدم النسخة المحفوظة في الأجزاء المتعارضة</button>
+    <button id="conflictCancel" type="button">رجوع — بدون تغيير أي نسخة</button>
+  </div>
+</div>
+
+<div id="editPrompt">
+  <div class="editPromptCard">
+    <h3>✎ وضع التعديل</h3>
+    <p>ده خاص بصاحب الهدية — بيه تقدروا تغيروا الكلام والأسماء والتواريخ والصور والأغنية في أي وقت</p>
+    <input id="editPassInput" type="password" placeholder="كلمة سر التعديل…">
+    <button class="unlockBtn" id="editPassBtn">دخول</button>
+    <div class="hint" id="editHint"></div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="hero">
+    <div class="script" id="heroTitle">Our Story</div>
+    <h1 id="coupleNames"></h1>
+    <p id="heroSubtitle">المكان الصغير اللي بيجمع حكايتنا ❤</p>
+    <div class="eForm">
+      <label class="eLabel">✎ عدلوا أسماءكم:</label>
+      <div class="eRow">
+        <input class="eInput" id="editHim" placeholder="اسمه">
+        <input class="eInput" id="editHer" placeholder="اسمها">
+      </div>
+      <label class="eLabel" for="editEnvelopeTopText">✎ الكلام الصغير على الظرف:</label>
+      <input class="eInput" id="editEnvelopeTopText" dir="auto" placeholder="A letter for">
+      <label class="eLabel" for="editEnvelopeName">✎ الاسم على الظرف (مستقل عن أسماء القصة):</label>
+      <input class="eInput" id="editEnvelopeName" dir="auto" placeholder="الاسم اللي يظهر على الظرف">
+      <label class="eLabel" for="editEnvelopeEmoji">✎ إيموجي ختم الظرف:</label>
+      <input class="eInput" id="editEnvelopeEmoji" maxlength="16" inputmode="text" placeholder="❤">
+      <label class="eLabel" for="editOpenPassword">✎ كلمة سر فتح الظرف والموقع:</label>
+      <input class="eInput" id="editOpenPassword" type="text" maxlength="60" autocomplete="off"
+        autocapitalize="off" spellcheck="false" placeholder="اكتب كلمة السر الجديدة">
+      <button class="editLetterBtn" id="saveOpenPassword" type="button">حفظ كلمة السر</button>
+      <div class="hint" id="openPasswordHint"></div>
+      <label class="eLabel" for="editEditPassword">✎ كلمة سر التعديل:</label>
+      <input class="eInput" id="editEditPassword" type="text" minlength="6" maxlength="128" autocomplete="off"
+        autocapitalize="off" spellcheck="false" placeholder="اكتب كلمة سر التعديل الجديدة">
+      <button class="editLetterBtn" id="saveEditPassword" type="button">حفظ كلمة سر التعديل</button>
+      <div class="hint" id="editPasswordHint"></div>
+      <label class="eLabel" for="editHeroTitle">✎ عنوان القصة:</label>
+      <input class="eInput" id="editHeroTitle" placeholder="Our Story">
+      <label class="eLabel" for="editHeroSubtitle">✎ الكلام الصغير تحت العنوان:</label>
+      <input class="eInput" id="editHeroSubtitle" placeholder="المكان الصغير اللي بيجمع حكايتنا ❤">
+      <label class="eLabel">✎ الهدية لمين؟ (الاسم الأول بيبقى صاحب الهدية، وبيظبط صيغة الكلام)</label>
+      <div class="whoToggle">
+        <button id="recHer">ليها 🩷</button>
+        <button id="recHim">ليه 🤍</button>
+      </div>
+      <button class="editLetterBtn" id="reopenLetter">✎ عدلوا كلام الجواب (الصفحات الأولى)</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="secTitle"><span class="orn">💕</span> بدايتنا <span class="orn">💕</span></div>
+    <div class="counterGrid">
+      <div class="counterBox"><b id="cD">0</b><span>يوم</span></div>
+      <div class="counterBox"><b id="cH">0</b><span>ساعة</span></div>
+      <div class="counterBox"><b id="cM">0</b><span>دقيقة</span></div>
+      <div class="counterBox"><b id="cS">0</b><span>ثانية</span></div>
+    </div>
+    <div class="counterCap" id="counterCaption">كل ثانية بتعدي وانت في قلبي ❤</div>
+    <div class="eForm">
+      <label class="eLabel" for="editCounterCaption">✎ الكلام الموجود تحت العداد:</label>
+      <input class="eInput" id="editCounterCaption" placeholder="كل ثانية بتعدي وانت في قلبي ❤">
+      <label class="eLabel">✎ عدلوا تاريخ ووقت بدايتكم — والعداد هيتظبط لوحده:</label>
+      <input class="eInput" id="editStart" type="datetime-local">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="secTitle"><span class="orn">📅</span> محطات قصتنا</div>
+    <div id="tlWrap"></div>
+    <button class="addTlBtn" id="addTl">＋ أضيفوا محطة جديدة</button>
+  </div>
+
+  <div class="section" id="messagesSec">
+    <div class="secTitle"><span class="orn">❤</span> message <span class="orn">❤</span></div>
+    <div class="eForm messageSettings">
+      <label class="checkRow" for="messagesRequireEditPassword">
+        <input id="messagesRequireEditPassword" type="checkbox" checked>
+        طلب كلمة سر التعديل عند إرسال الرسائل
+      </label>
+      <p class="hint">لو ألغيت الاختيار، أي حد فتح الموقع يقدر يرسل رسالة. تعديل وحذف الرسائل يفضلوا من وضع التعديل فقط.</p>
+      <div class="hint" id="messageSettingHint" role="status" aria-live="polite"></div>
+    </div>
+    <div id="msgWrap"></div>
+    <div class="composer">
+      <button class="sendBtn" id="unlockMessages" type="button">✎ ادخل وضع التعديل لكتابة رسالة</button>
+      <div id="messageWriter" hidden>
+      <div class="whoToggle">
+        <button id="whoHim"></button>
+        <button id="whoHer"></button>
+      </div>
+      <textarea id="msgInput" maxlength="2000" aria-label="الرسالة الجديدة" placeholder="اكتبوا رسالة لبعض هنا…"></textarea>
+      <button class="sendBtn" id="sendMsg" type="button">إرسال ❤</button>
+      </div>
+      <div class="hint" id="messageHint" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="section" id="giftBoxSec">
+    <div class="secTitle"><span class="orn">🎁</span> <span id="giftBoxTitle">مفاجأة صغيرة</span></div>
+    <div class="eForm">
+      <label class="eLabel" for="editGiftBoxTitle">✎ عنوان قسم الصندوق:</label>
+      <input class="eInput" id="editGiftBoxTitle" placeholder="مفاجأة صغيرة">
+    </div>
+    <div class="giftBoxWrap" id="giftBoxWrap"></div>
+  </div>
+
+  <div class="section" id="memoriesSec">
+    <div class="secTitle"><span class="orn">🔄</span> memories</div>
+    <div class="memGrid" id="memGrid"></div>
+    <button class="addMemBtn" id="addMemBtn" type="button" aria-expanded="false">إضافة صورة جديدة</button>
+    <div class="memForm" id="memForm">
+      <label class="pick" for="memFile">📷 اختاروا صورة من الموبايل أو الكمبيوتر</label>
+      <input type="file" id="memFile" accept="image/*,.jpg,.jpeg,.png,.webp,.heic">
+      <p class="hint">الصورة بتتحفظ تلقائيًا بعد الرفع. اكتبوا الكلام تحت الصورة، وهو كمان بيتحفظ تلقائيًا.</p>
+    </div>
+  </div>
+
+  <div class="section" id="songSec">
+    <div class="secTitle"><span class="orn">🎵</span> أغنيتنا</div>
+    <div class="songEmpty" id="clipReady" style="display:none">🎵 أغنيتكم جاهزة<br>شغّلوها ووقّفوها من هنا أو من زرار ▶ اللي تحت ❤</div>
+    <audio id="nativeAudio" controls preload="metadata"></audio>
+    <div id="playerBox"><div id="ytp"></div></div>
+    <div class="songEmpty" id="songEmpty">لسه مخترتوش أغنيتكم 🎵<br>من وضع التعديل ارفعوا الأغنية</div>
+    <a class="songOpenLink" id="songOpenLink" href="#" target="_blank" rel="noopener" style="display:none">▶ افتحوا الأغنية على يوتيوب</a>
+    <div class="eForm">
+      <label class="eLabel">✎ اسم الأغنية:</label>
+      <input class="eInput" id="editSongTitle">
+      <label class="eLabel">✎ الطريقة الأساسية — ارفعوا ملف الأغنية أو مقطعها (الأفضل ٣٠–٦٠ ثانية من أحلى جزء):</label>
+      <label class="songPick" for="songFile">🎵 اختاروا ملف صوتي (MP3 / M4A)</label>
+      <input class="songPickInput" type="file" id="songFile" accept="audio/*,.mp3,.m4a,.aac,.ogg,.opus,.wav">
+      <label class="checkRow"><input type="checkbox" id="autoplayChk"> تشتغل لوحدها أول ما يدخل على الصفحة</label>
+      <button class="delBtn" id="clearClip" style="display:none">🗑 امسح الأغنية</button>
+      <div class="eNote">لينك ساوند تيكتوك بيتبعتلنا كمرجع بس عشان نجهزلكم المقطع — التشغيل على الصفحة بيكون بالملف المرفوع</div>
+      <div class="orDiv">أو</div>
+      <label class="eLabel">بديل: لينك الأغنية كاملة من يوتيوب (شير → نسخ اللينك):</label>
+      <input class="eInput" id="editSongUrl" placeholder="https://youtu.be/…" dir="ltr">
+      <button class="sendBtn" id="saveSong">حفظ</button>
+      <div class="hint" id="songHint"></div>
+    </div>
+  </div>
+</div>
+
+<div id="musicBar">
+  <div class="cover">♪</div>
+  <div class="songMeta"><b id="songTitle"></b><span id="songSub">أغنيتنا</span></div>
+  <div class="eq"><i></i><i></i><i></i><i></i></div>
+  <button class="playBtn" id="playBtn">▶</button>
+</div>
+
+
+<script src="/image-compression.js"></script>
+<script src="/request-json.js"></script>
+<script src="/story-state.js"></script>
+<script>
+/* ================= صفحة الهدية — متوصلة بالسيرفر ================= */
+const SLUG = location.pathname.split('/').filter(Boolean).pop();
+const $ = id => document.getElementById(id);
+
+let DATA = null;                 // محتوى الهدية
+let EDITPASS = false;            // جلسة تعديل آمنة محفوظة في Cookie محمي
+let OPEN_PASSWORD = '';          // تظهر فقط بعد تسجيل دخول التعديل
+let EDIT_PASSWORD = '';          // تظهر فقط داخل جلسة التعديل الموثقة
+let META = { recipient: 'her', brandName: '', whatsapp: '#' };
+
+const state = {
+  sender: 'maker', letterPage: 0,
+  editMode: false, letterEditing: false, letterPhase: 'pre-auth', afterAuth: null,
+  player: null, playerReady: false, clipSet: false,
+  nextMsgId: 1, nextMemId: 1, nextTlId: 1
+};
+
+/* ---------- أدوات ---------- */
+function readFile(file, cb) {
+  const r = new FileReader();
+  r.onload = () => cb(r.result);
+  r.onerror = () => cb(null);
+  r.readAsDataURL(file);
+}
+async function api(url, body, method = 'POST') {
+  return RequestJSON.request(url, { method, headers: { 'Content-Type': 'application/json' },
+    ...(method === 'GET' ? {} : { body: JSON.stringify(body || {}) }) });
+}
+function nextId(arr) { return arr.reduce((m, x) => Math.max(m, x.id || 0), 0) + 1; }
+function applyEditButtonPlacement() {
+  const afterSong = META.editButtonPlacement === 'after-song';
+  document.body.classList.toggle('edit-button-after-song', afterSong);
+  if (afterSong) $('songSec').insertAdjacentElement('afterend', $('editFab'));
+}
+
+/* ---------- مؤشر الحفظ ---------- */
+const saveTag = document.createElement('div');
+saveTag.style.cssText = 'position:fixed;top:14px;inset-inline-start:14px;z-index:100;display:none;pointer-events:none;' +
+  'max-width:calc(100vw - 28px);background:#fffdfb;border:1.5px solid #eed9cf;color:#b3765a;padding:7px 15px;' +
+  'border-radius:999px;font-size:13px;box-shadow:0 10px 30px rgba(120,80,60,.12)';
+document.body.appendChild(saveTag);
+function showSave(t, keep) {
+  saveTag.textContent = t; saveTag.style.display = 'block';
+  $('letterSaveStatus').textContent = t;
+  clearTimeout(showSave._t);
+  if (!keep) showSave._t = setTimeout(() => saveTag.style.display = 'none', 1800);
+}
+let saveTimer = null, saveInFlight = null, savedContent = null;
+let savedRevision = null, pendingConflict = null, authExpired = false;
+let latestSaveText = 'اتحفظ ✔';
+function storySaveSnapshot() {
+  // Messages have atomic endpoints; an unrelated edit must not overwrite a new visitor message.
+  return JSON.stringify(StoryState.editable(DATA));
+}
+function acceptStoryVersion(result) {
+  savedContent = JSON.stringify(StoryState.editable(result.content));
+  savedRevision = result.revision;
+}
+function passwordDraftValues() {
+  return [[$('editOpenPassword').value, OPEN_PASSWORD], [$('editEditPassword').value, EDIT_PASSWORD]]
+    .map(([draft, current]) => draft === current ? undefined : draft);
+}
+function refreshStoryEditor(passwordDrafts = passwordDraftValues()) {
+  const sender = state.sender;
+  boot();
+  setSender(sender);
+  ['editOpenPassword', 'editEditPassword'].forEach((id, index) => {
+    if (passwordDrafts[index] !== undefined) $(id).value = passwordDrafts[index];
+  });
+  if (state.letterEditing) {
+    state.letterPage = Math.min(state.letterPage, DATA.letterPages.length - 1);
+    loadLetterEditorPage();
+  }
+}
+function recovery(message, login = false) {
+  $('saveRecoveryText').textContent = message;
+  $('saveRecovery').hidden = false;
+  $('retryStorySave').hidden = login;
+  $('resumeStoryLogin').hidden = !login;
+}
+function displayConflict(result) {
+  pendingConflict = result;
+  showSave('الحفظ متوقف — راجع التعارض بين النسختين.', true);
+  const merged = StoryState.merge(JSON.parse(savedContent), DATA, result.content);
+  const keys = merged.conflicts.flatMap(key => key === 'letterPages' ? ['letterPages', 'letterEmojis'] : [key]);
+  const labels = { letterPages: 'صفحات الجواب', letterEmojis: 'إيموجي الصفحات', heroTitle: 'عنوان القصة',
+    heroSubtitle: 'الكلام تحت العنوان', memories: 'الذكريات', timeline: 'محطات القصة',
+    giftBox: 'صندوق المفاجأة', messagesRequireEditPassword: 'حماية الرسائل', himName: 'اسمه', herName: 'اسمها',
+    envelopeTopText: 'الكلام على الظرف', envelopeName: 'اسم الظرف', envelopeEmoji: 'ختم الظرف',
+    counterCaption: 'كلام العداد', startDate: 'تاريخ البداية', giftBoxTitle: 'عنوان الصندوق',
+    songTitle: 'اسم الأغنية', songClip: 'ملف الأغنية', songUrl: 'رابط الأغنية', songAutoplay: 'التشغيل التلقائي', recipient: 'مستلم الهدية' };
+  const describe = content => keys.map(key => `${labels[key] || key}:\n${typeof content[key] === 'string' ? content[key] : JSON.stringify(content[key], null, 2)}`).join('\n\n');
+  $('conflictLocal').textContent = describe(DATA);
+  $('conflictRemote').textContent = describe(result.content);
+  $('saveConflict').hidden = false;
+  $('conflictCancel').focus();
+}
+$('conflictCancel').addEventListener('click', () => {
+  $('saveConflict').hidden = true;
+  recovery('الحفظ متوقف لحين مراجعة التعارض — تعديلك ما زال موجودًا هنا.');
+});
+async function resolveStoryConflict(chooseLocal) {
+  if (!pendingConflict) return;
+  const result = pendingConflict;
+  DATA = StoryState.merge(JSON.parse(savedContent), DATA, result.content, chooseLocal).content;
+  acceptStoryVersion(result); pendingConflict = null;
+  $('saveConflict').hidden = true;
+  refreshStoryEditor();
+  await saveNow();
+}
+$('conflictKeepLocal').addEventListener('click', () => resolveStoryConflict(true));
+$('conflictKeepRemote').addEventListener('click', () => resolveStoryConflict(false));
+$('retryStorySave').addEventListener('click', () => saveNow());
+$('resumeStoryLogin').addEventListener('click', () => { state.afterAuth = 'resume'; openEditPrompt(); });
+function setSaveBusy(busy) {
+  $('ltSave').disabled = busy;
+  $('ltSave').textContent = busy ? 'جاري الحفظ…' : 'حفظ الصفحة ❤';
+  $('ltDone').disabled = busy;
+}
+async function saveNow(successText = 'اتحفظ ✔') {
+  if (!EDITPASS) return false;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  latestSaveText = successText;
+  if (saveInFlight) return saveInFlight;
+  if (pendingConflict) { displayConflict(pendingConflict); return false; }
+  if (authExpired) { recovery('جلسة التعديل انتهت — سجّل دخول تاني، تعديلك لسه موجود.', true); return false; }
+  showSave('بيتحفظ…', true);
+  setSaveBusy(true);
+  // One writer: coalesce rapid edits and never let an older save overwrite a newer one.
+  saveInFlight = Promise.resolve().then(async () => {
+    try {
+      let merges = 0;
+      while (storySaveSnapshot() !== savedContent) {
+        const snapshot = storySaveSnapshot();
+        const sent = JSON.parse(snapshot);
+        const invalid = StoryState.validate(sent);
+        if (invalid) { const error = new Error(invalid.error); error.data = invalid; throw error; }
+        let result;
+        try {
+          result = await api(`/api/story/${SLUG}/content`, { content: sent, revision: savedRevision });
+        } catch (error) {
+          if (error.message !== 'content_conflict' || !error.data?.content) throw error;
+          const merged = StoryState.merge(JSON.parse(savedContent), DATA, error.data.content);
+          if (merged.conflicts.length || ++merges > 2) { displayConflict(error.data); return false; }
+          DATA = merged.content; acceptStoryVersion(error.data); refreshStoryEditor();
+          continue;
+        }
+        if (result.ok !== true || !result.content || !result.revision) throw new Error('invalid_response');
+        // Keep the live DATA object and its nested timeline items intact. Inputs
+        // in renderTl close over those objects; replacing DATA with result.content
+        // would leave subsequent edits writing to detached, unsaved objects.
+        // Acknowledge only the exact snapshot sent, so edits made while this
+        // request was in flight remain dirty and are picked up by the next loop.
+        savedContent = snapshot;
+        savedRevision = result.revision;
+      }
+      $('saveRecovery').hidden = true;
+      showSave(latestSaveText);
+      return true;
+    } catch (e) {
+      authExpired = e.status === 401 || e.message === 'unauthorized';
+      const message = authExpired ? 'جلسة التعديل انتهت — سجّل دخول تاني مع الاحتفاظ بتعديلك.'
+        : e.message === 'content_limit_exceeded' ? `الحفظ لم يكتمل — تجاوزت الحد المسموح (${e.data.limit}) في ${e.data.field}. قلّل المحتوى وحاول تاني.`
+        : e.message === 'revision_required' ? 'حدّث الصفحة لفتح آخر إصدار؛ انسخ تعديلك قبل التحديث.'
+        : 'الحفظ لم يكتمل — كلامك موجود هنا. ' + RequestJSON.message(e);
+      showSave(message, true);
+      recovery(message, authExpired);
+      return false;
+    }
+  }).finally(() => { saveInFlight = null; setSaveBusy(false); });
+  return saveInFlight;
+}
+function scheduleSave() {
+  if (!EDITPASS) return;
+  clearTimeout(saveTimer);
+  if (pendingConflict || authExpired) return;
+  showSave('بيتحفظ…', true);
+  saveTimer = setTimeout(() => saveNow(), 700);
+}
+window.addEventListener('beforeunload', event => {
+  if (mediaUploadInProgress || (EDITPASS && savedContent !== null && storySaveSnapshot() !== savedContent)) {
+    event.preventDefault(); event.returnValue = '';
+  }
+});
+
+/* ---------- صيغة الكلام ---------- */
+function T() {
+  return DATA.recipient === 'him'
+    ? { tap: '❦ دوس على الظرف ❦', ph: 'اكتب كلمة السر…', unlock: '💕 افتح الهدية 💕', wrong: 'مش هي 🙈 فكر في كلمتنا…', enter: 'الدخول للموقع 🎀' }
+    : { tap: '❦ دوسي على الظرف ❦', ph: 'اكتبي كلمة السر…', unlock: '💕 افتحي الهدية 💕', wrong: 'مش هي 🙈 فكري في كلمتنا…', enter: 'الدخول للموقع 🎀' };
+}
+function makerKey() { return DATA.recipient === 'her' ? 'him' : 'her'; }
+function sideOf(from) { return from === 'maker' ? makerKey() : from; }
+function applyGender() {
+  const t = T();
+  $('tapHint').textContent = t.tap;
+  $('secretInput').placeholder = t.ph;
+  $('unlockBtn').textContent = t.unlock;
+  if (state.letterPage === DATA.letterPages.length - 1 && !state.letterEditing)
+    $('nextBtn').textContent = t.enter;
+  $('recHer').classList.toggle('on', DATA.recipient === 'her');
+  $('recHim').classList.toggle('on', DATA.recipient === 'him');
+}
+function applyNames() {
+  const maker = makerKey();
+  const first = maker === 'him' ? DATA.himName : DATA.herName;
+  const second = maker === 'him' ? DATA.herName : DATA.himName;
+  $('coupleNames').textContent = first + ' ❤ ' + second;
+  $('whoHim').textContent = DATA.himName;
+  $('whoHer').textContent = DATA.herName;
+}
+function applyCustomCopy() {
+  const recipientName = DATA.recipient === 'him' ? DATA.himName : DATA.herName;
+  $('envelopeTopText').textContent = DATA.envelopeTopText || 'A letter for';
+  $('envelopeName').textContent = DATA.envelopeName || recipientName || META.recipientName || '❤';
+  $('envelopeEmoji').textContent = DATA.envelopeEmoji || '❤';
+  $('heroTitle').textContent = DATA.heroTitle || 'Our Story';
+  $('heroSubtitle').textContent = DATA.heroSubtitle || 'المكان الصغير اللي بيجمع حكايتنا ❤';
+  $('counterCaption').textContent = DATA.counterCaption || 'كل ثانية بتعدي وانت في قلبي ❤';
+  $('giftBoxTitle').textContent = DATA.giftBoxTitle || 'مفاجأة صغيرة';
+}
+function setSender(k) {
+  state.sender = k;
+  const side = sideOf(k);
+  $('whoHim').classList.toggle('on', side === 'him');
+  $('whoHer').classList.toggle('on', side === 'her');
+}
+
+/* ---------- القلوب ---------- */
+const HEARTS = ['🤎', '🩷', '🤍', '💗'];
+function spawnHeart() {
+  if (document.hidden || state.letterEditing || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const h = document.createElement('span');
+  h.className = 'heart-fall'; h.textContent = HEARTS[Math.random() * HEARTS.length | 0];
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = (12 + Math.random() * 16) + 'px';
+  h.style.animationDuration = (6 + Math.random() * 7) + 's';
+  h.style.opacity = .35 + Math.random() * .45;
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 14000);
+}
+setInterval(spawnHeart, 700); for (let i = 0; i < 8; i++) setTimeout(spawnHeart, i * 180);
+
+/* ---------- الأغنية ---------- */
+const audioEl = $('nativeAudio');
+audioEl.loop = true;
+function songHint(t) { $('songHint').textContent = t || ''; }
+function fmtTime(s) { if (!isFinite(s) || s <= 0) return ''; const m = s / 60 | 0, x = Math.round(s % 60); return m + ':' + String(x).padStart(2, '0'); }
+function setBarPlaying(p) {
+  $('musicBar').classList.toggle('playing', p);
+  $('playBtn').textContent = p ? '❚❚' : '▶';
+}
+audioEl.addEventListener('play', () => setBarPlaying(true));
+audioEl.addEventListener('playing', () => setBarPlaying(true));
+audioEl.addEventListener('pause', () => setBarPlaying(false));
+audioEl.addEventListener('ended', () => setBarPlaying(false));
+audioEl.addEventListener('loadedmetadata', () => {
+  if (!state.clipSet || !isFinite(audioEl.duration) || audioEl.duration <= 0) return;
+  $('songSub').textContent = 'أغنيتنا · ' + fmtTime(audioEl.duration);
+});
+audioEl.addEventListener('error', () => {
+  setBarPlaying(false);
+  if (state.clipSet) songHint('الملف مش راضي يشتغل — جربوا ملف MP3 تاني');
+});
+setInterval(() => { if (state.clipSet) setBarPlaying(!audioEl.paused); }, 800);
+
+/* تشغيل الأغنية مع دخول الصفحة — ولو المتصفح رفض، بتشتغل مع أول لمسة */
+function startSong() {
+  audioEl.play().catch(() => {
+    const once = () => { audioEl.play().catch(() => { }); document.removeEventListener('click', once); };
+    document.addEventListener('click', once, { once: true });
+    document.addEventListener('touchstart', once, { once: true });
+  });
+}
+function applySong() {
+  state.clipSet = !!DATA.songClip;
+  if (DATA.songClip) { if (audioEl.getAttribute('src') !== DATA.songClip) { audioEl.src = DATA.songClip; audioEl.load(); } }
+  else { audioEl.removeAttribute('src'); $('songSub').textContent = 'أغنيتنا'; }
+  $('songTitle').textContent = DATA.songTitle || 'أغنيتنا ❤';
+  syncSongSec();
+}
+function parseYT(url) {
+  if (!url) return null;
+  let parsed;
+  try { parsed = new URL(/^https?:\/\//i.test(url.trim()) ? url.trim() : 'https://' + url.trim()); }
+  catch (e) { return null; }
+  if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) return null;
+  const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+  let id = '';
+  if (host === 'youtu.be') id = parsed.pathname.split('/').filter(Boolean)[0] || '';
+  else if (['youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com'].includes(host)) {
+    if (parsed.pathname === '/watch') id = parsed.searchParams.get('v') || '';
+    else {
+      const parts = parsed.pathname.split('/').filter(Boolean);
+      if (['shorts', 'embed', 'live'].includes(parts[0])) id = parts[1] || '';
+    }
+  }
+  return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
+}
+let ytApiAsked = false;
+function loadYTApi() {
+  if (ytApiAsked) return; ytApiAsked = true;
+  const s = document.createElement('script');
+  s.src = 'https://www.youtube.com/iframe_api';
+  s.onerror = () => syncSongSec();
+  document.head.appendChild(s);
+}
+window.onYouTubeIframeAPIReady = function () {
+  const id = parseYT(DATA && DATA.songUrl); if (id) buildPlayer(id);
+};
+function buildPlayer(id) {
+  if (state.player) { try { state.player.loadVideoById(id); } catch (e) { } return; }
+  try {
+    state.player = new YT.Player('ytp', {
+      videoId: id, playerVars: { playsinline: 1, rel: 0 },
+      events: {
+        onReady: () => { state.playerReady = true; syncSongSec(); },
+        onStateChange: ev => setBarPlaying(ev.data === 1)
+      }
+    });
+  } catch (e) { syncSongSec(); }
+}
+function syncSongSec() {
+  const hasClip = state.clipSet, ytId = parseYT(DATA.songUrl);
+  $('songSec').classList.toggle('hiddenSec', !hasClip && !ytId && !state.editMode);
+  $('clipReady').style.display = hasClip ? 'block' : 'none';
+  $('nativeAudio').classList.toggle('show', hasClip);
+  $('songEmpty').style.display = (!hasClip && !ytId) ? 'block' : 'none';
+  $('playerBox').classList.toggle('show', !hasClip && !!ytId && state.playerReady);
+  const link = $('songOpenLink');
+  if (!hasClip && ytId) { link.href = 'https://www.youtube.com/watch?v=' + encodeURIComponent(ytId); link.style.display = 'block'; }
+  else link.style.display = 'none';
+  $('clearClip').style.display = hasClip ? 'inline-block' : 'none';
+}
+
+/* ---------- شاشة القفل ---------- */
+let envelopeOpened = false;
+function revealEnvelopeLetter() {
+  if (envelopeOpened || !DATA || !DATA.letterPages || !DATA.letterPages.length) return;
+  envelopeOpened = true;
+  const envelope = $('envelope');
+  envelope.classList.add('open');
+  envelope.setAttribute('aria-expanded', 'true');
+  $('tapHint').style.display = 'none';
+  setTimeout(() => envelope.classList.add('flap-opened'), 860);
+  setTimeout(() => $('lockScreen').classList.add('letter-reading'), 900);
+  setTimeout(() => openLetter(0, 'pre-auth'), 1320);
+}
+$('envelope').addEventListener('click', revealEnvelopeLetter);
+$('envelope').addEventListener('keydown', event => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    revealEnvelopeLetter();
+  }
+});
+function showPasswordStep() {
+  stopLetterTyping();
+  $('letterOverlay').classList.remove('show', 'editor-view');
+  $('letterOverlay').setAttribute('aria-hidden', 'true');
+  $('lockScreen').classList.remove('letter-reading');
+  $('lockScreen').classList.add('password-step');
+  $('secretBox').classList.add('show');
+  setTimeout(() => $('secretInput').focus(), 180);
+}
+function enterMainSite() {
+  stopLetterTyping();
+  $('letterOverlay').classList.remove('show', 'editor-view');
+  $('letterOverlay').setAttribute('aria-hidden', 'true');
+  $('main').classList.add('show');
+  $('musicBar').classList.add('show');
+  $('editFab').classList.add('show');
+  window.scrollTo({ top: 0 });
+  if (state.clipSet && DATA.songAutoplay) startSong();
+}
+async function tryUnlock() {
+  if ($('unlockBtn').disabled) return;
+  $('unlockBtn').disabled = true; $('hint').textContent = 'جاري الفتح…';
+  const v = $('secretInput').value.trim();
+  try {
+    const r = await api(`/api/story/${SLUG}/open`, { password: v });
+    DATA = r.content; META.brandName = r.brandName; META.whatsapp = r.whatsapp;
+    boot();
+    $('lockScreen').classList.add('hidden');
+    $('secretBox').classList.remove('show');
+    if (DATA.letterPages.length > 1) openLetter(1, 'post-auth');
+    else enterMainSite();
+  } catch (e) {
+    $('secretBox').classList.add('shake');
+    $('hint').textContent = e.status === 401 ? T().wrong : RequestJSON.message(e);
+    setTimeout(() => $('secretBox').classList.remove('shake'), 500);
+  } finally { $('unlockBtn').disabled = false; }
+}
+$('unlockBtn').addEventListener('click', tryUnlock);
+$('secretInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+/* ---------- الجواب ---------- */
+const EMOJIS = ['😍', '🥹', '😂', '🥰', '❤️'];
+let typing = null, typingDelay = null;
+function letterEmojiAt(index) {
+  if (!Array.isArray(DATA.letterEmojis)) DATA.letterEmojis = [];
+  return DATA.letterEmojis[index] || EMOJIS[index % EMOJIS.length];
+}
+function stopLetterTyping() {
+  clearInterval(typing);
+  clearTimeout(typingDelay);
+  typing = null;
+  typingDelay = null;
+}
+function openLetter(page, phase) {
+  state.letterPhase = phase || ($('lockScreen').classList.contains('hidden') ? 'editor' : 'pre-auth');
+  const editorView = state.letterPhase === 'editor';
+  $('letterOverlay').classList.toggle('editor-view', editorView);
+  $('letterOverlay').classList.add('show');
+  $('letterOverlay').setAttribute('aria-hidden', 'false');
+  showPage(page || 0, true);
+}
+function showPage(i, waitForPaper) {
+  state.letterPage = i;
+  $('letterEmoji').textContent = letterEmojiAt(i);
+  const isIntro = state.letterPhase === 'pre-auth';
+  $('nextBtn').textContent = (isIntro || i === DATA.letterPages.length - 1) ? T().enter : 'التالي ←';
+  const txt = DATA.letterPages[i], el = $('letterText');
+  el.textContent = ''; $('caret').style.display = 'inline-block';
+  stopLetterTyping();
+  const chars = Array.from(txt); let k = 0;
+  const startTyping = () => {
+    typingDelay = null;
+    typing = setInterval(() => {
+      el.textContent = chars.slice(0, ++k).join('');
+      if (k >= chars.length) { stopLetterTyping(); $('caret').style.display = 'none'; }
+    }, 45);
+  };
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  typingDelay = setTimeout(startTyping, waitForPaper && !reducedMotion ? 760 : 0);
+}
+$('nextBtn').addEventListener('click', () => {
+  if (state.letterPhase === 'pre-auth') { showPasswordStep(); return; }
+  if (state.letterPage < DATA.letterPages.length - 1) showPage(state.letterPage + 1);
+  else enterMainSite();
+});
+function letterEdit(on, persist = true) {
+  if (!on && state.letterEditing && persist) { saveCurrentLetter(); scheduleSave(); }
+  state.letterEditing = on;
+  document.body.classList.toggle('letter-editor-open', on);
+  stopLetterTyping();
+  $('letterView').style.display = on ? 'none' : 'block';
+  $('nextBtn').style.display = on ? 'none' : 'inline-block';
+  $('letterEditWrap').classList.toggle('show', on);
+  $('letterPen').style.background = on ? 'var(--tan)' : '#fffdfb';
+  $('letterPen').style.color = on ? '#fff' : 'var(--tan-deep)';
+  if (on) { loadLetterEditorPage(); }
+  else showPage(state.letterPage);
+}
+function loadLetterEditorPage() {
+  $('letterTa').value = DATA.letterPages[state.letterPage];
+  $('letterEmojiInput').value = letterEmojiAt(state.letterPage);
+  $('letterEmoji').textContent = letterEmojiAt(state.letterPage);
+  updatePageInd();
+}
+function updatePageInd() {
+  $('pageInd').textContent = 'صفحة ' + (state.letterPage + 1) + ' من ' + DATA.letterPages.length;
+  $('ltDel').style.display = DATA.letterPages.length > 1 ? 'inline-block' : 'none';
+  $('ltPrev').disabled = state.letterPage === 0;
+  $('ltNextEdit').disabled = state.letterPage === DATA.letterPages.length - 1;
+  $('ltAdd').disabled = DATA.letterPages.length >= 30;
+}
+function saveCurrentLetter() {
+  DATA.letterPages[state.letterPage] = $('letterTa').value.slice(0, 3000);
+  if (!Array.isArray(DATA.letterEmojis)) DATA.letterEmojis = [];
+  const emoji = $('letterEmojiInput').value.trim() || EMOJIS[state.letterPage % EMOJIS.length];
+  DATA.letterEmojis[state.letterPage] = emoji;
+  $('letterEmoji').textContent = emoji;
+}
+function moveLetterEditor(step) {
+  saveCurrentLetter();
+  const nextPage = Math.max(0, Math.min(DATA.letterPages.length - 1, state.letterPage + step));
+  state.letterPage = nextPage;
+  loadLetterEditorPage();
+  scheduleSave();
+}
+$('letterTa').addEventListener('input', () => { saveCurrentLetter(); scheduleSave(); });
+$('letterEmojiInput').addEventListener('input', event => {
+  $('letterEmoji').textContent = event.target.value.trim();
+  saveCurrentLetter(); scheduleSave();
+});
+$('letterPen').addEventListener('click', () => {
+  if (!EDITPASS) { state.afterAuth = 'letter'; openEditPrompt(); return; }
+  letterEdit(!state.letterEditing);
+});
+$('ltSave').addEventListener('click', async () => {
+  saveCurrentLetter();
+  await saveNow('صفحة الجواب اتحفظت ✔');
+});
+$('ltPrev').addEventListener('click', () => moveLetterEditor(-1));
+$('ltNextEdit').addEventListener('click', () => moveLetterEditor(1));
+$('ltAdd').addEventListener('click', () => {
+  if (DATA.letterPages.length >= 30) { showSave('الحد الأقصى 30 صفحة', true); return; }
+  saveCurrentLetter();
+  DATA.letterPages.splice(state.letterPage + 1, 0, 'اكتبوا كلامكم هنا ❤');
+  DATA.letterEmojis.splice(state.letterPage + 1, 0, EMOJIS[(state.letterPage + 1) % EMOJIS.length]);
+  state.letterPage++;
+  loadLetterEditorPage(); scheduleSave();
+});
+$('ltDel').addEventListener('click', () => {
+  if (DATA.letterPages.length <= 1) return;
+  DATA.letterPages.splice(state.letterPage, 1);
+  DATA.letterEmojis.splice(state.letterPage, 1);
+  if (state.letterPage >= DATA.letterPages.length) state.letterPage = DATA.letterPages.length - 1;
+  loadLetterEditorPage(); scheduleSave();
+});
+$('ltDone').addEventListener('click', async () => {
+  saveCurrentLetter();
+  if (!await saveNow('صفحات البداية اتحفظت ✔')) return;
+  letterEdit(false, false);
+  stopLetterTyping();
+  $('letterOverlay').classList.remove('show', 'editor-view');
+  $('letterOverlay').setAttribute('aria-hidden', 'true');
+  $('main').classList.add('show');
+  $('musicBar').classList.add('show');
+  setEditMode(true);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ---------- وضع التعديل ---------- */
+function openEditPrompt() { $('editPrompt').classList.add('show'); $('editPassInput').focus(); }
+$('editFab').addEventListener('click', () => {
+  if (authExpired) { state.afterAuth = 'resume'; openEditPrompt(); return; }
+  if (!EDITPASS) {
+    state.afterAuth = $('main').classList.contains('show') ? 'main' : 'letter-start';
+    openEditPrompt();
+    return;
+  }
+  setEditMode(!state.editMode);
+});
+async function tryEditPass() {
+  if ($('editPassBtn').disabled) return;
+  $('editPassBtn').disabled = true; $('editHint').textContent = 'جاري الدخول…';
+  const p = $('editPassInput').value.trim();
+  const messageSender = state.sender;
+  try {
+    await api(`/api/gifts/${SLUG}/login`, { password: p });
+    const [contentData, passwordData, editPasswordData] = await Promise.all([
+      api(`/api/story/${SLUG}/content`, null, 'GET'),
+      api(`/api/story/${SLUG}/open-password`, null, 'GET'),
+      api(`/api/gifts/${SLUG}/admin/password`, null, 'GET')
+    ]);
+    const resuming = savedContent !== null && (authExpired || storySaveSnapshot() !== savedContent);
+    const merged = resuming ? StoryState.merge(JSON.parse(savedContent), DATA, contentData.content) : null;
+    const passwordDrafts = passwordDraftValues();
+    EDITPASS = true;
+    OPEN_PASSWORD = passwordData.password || '';
+    EDIT_PASSWORD = editPasswordData.password || '';
+    authExpired = false;
+    if (merged?.conflicts.length) displayConflict(contentData);
+    else {
+      DATA = merged ? merged.content : contentData.content;
+      acceptStoryVersion(contentData);
+    }
+    if (resuming) refreshStoryEditor(passwordDrafts); else boot();
+    if (!pendingConflict && !resuming) $('saveRecovery').hidden = true;
+    const destination = state.afterAuth;
+    $('lockScreen').classList.add('hidden');
+    $('main').classList.add('show');
+    $('musicBar').classList.add('show');
+    $('editFab').classList.add('show');
+    $('editPrompt').classList.remove('show');
+    $('editPassInput').value = ''; $('editHint').textContent = '';
+    state.afterAuth = null;
+    setEditMode(true);
+    if (destination === 'resume') {
+      if (state.letterEditing) { openLetter(state.letterPage, 'editor'); letterEdit(true); }
+      if (!pendingConflict) await saveNow('تم تسجيل الدخول وحفظ تعديلك ✔');
+      return;
+    }
+    if (destination === 'letter' || destination === 'letter-start') {
+      openLetter(destination === 'letter-start' ? 0 : state.letterPage, 'editor');
+      letterEdit(true);
+    } else if (destination === 'memory') {
+      $('letterOverlay').classList.remove('show', 'editor-view');
+      $('letterOverlay').setAttribute('aria-hidden', 'true');
+      openMemoryEditor();
+    } else {
+      $('letterOverlay').classList.remove('show', 'editor-view');
+      $('letterOverlay').setAttribute('aria-hidden', 'true');
+      if (destination === 'message') { setSender(messageSender); openMessageWriter(); }
+    }
+  } catch (e) {
+    $('editHint').textContent = e.status === 401 ? 'كلمة السر مش مظبوطة 🙈' : RequestJSON.message(e);
+    $('editPassInput').classList.add('shake');
+    setTimeout(() => $('editPassInput').classList.remove('shake'), 500);
+  } finally { $('editPassBtn').disabled = false; }
+}
+$('editPassBtn').addEventListener('click', tryEditPass);
+$('editPassInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryEditPass(); });
+$('editPrompt').addEventListener('click', e => {
+  if (e.target.id === 'editPrompt') { $('editPrompt').classList.remove('show'); state.afterAuth = null; }
+});
+function setEditMode(on) {
+  state.editMode = on;
+  document.body.classList.toggle('editing', on);
+  $('editFab').classList.toggle('on', on);
+  $('editFab').textContent = on ? '✔ تم — اقفل التعديل' : '✎ تعديل';
+  renderTl(); renderMsgs(); renderGiftBox(); renderMems(); syncSongSec();
+}
+function openMemoryEditor() {
+  setEditMode(true);
+  $('memForm').classList.add('show');
+  $('addMemBtn').setAttribute('aria-expanded', 'true');
+  requestAnimationFrame(() => $('memForm').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+}
+
+/* ---------- العدّاد ---------- */
+function tick() {
+  if (!DATA) return;
+  let diff = Math.max(0, (Date.now() - new Date(DATA.startDate)) / 1000 | 0);
+  $('cD').textContent = diff / 86400 | 0; diff %= 86400;
+  $('cH').textContent = String(diff / 3600 | 0).padStart(2, '0'); diff %= 3600;
+  $('cM').textContent = String(diff / 60 | 0).padStart(2, '0');
+  $('cS').textContent = String(diff % 60).padStart(2, '0');
+}
+setInterval(tick, 1000);
+
+/* ---------- المحطات ---------- */
+function renderTl() {
+  $('addTl').disabled = DATA.timeline.length >= StoryState.listLimits.timeline;
+  const w = $('tlWrap'); w.innerHTML = '';
+  DATA.timeline.forEach(t => {
+    const d = document.createElement('div'); d.className = 'tl-item';
+    const view = document.createElement('div');
+    const title = document.createElement('span'); title.className = 'tl-title';
+    title.textContent = t.title;
+    const lineBreak = document.createElement('br');
+    const date = document.createElement('span'); date.className = 'tl-date';
+    date.textContent = '📅 ' + (t.date || '');
+    view.append(title, lineBreak, date);
+    d.appendChild(view);
+    if (state.editMode) {
+      const tools = document.createElement('div'); tools.className = 'tl-tools';
+      const ti = document.createElement('input'); ti.className = 'eInput'; ti.value = t.title; ti.placeholder = 'اكتبوا المحطة…'; ti.maxLength = 300;
+      const di = document.createElement('input'); di.className = 'eInput'; di.type = 'date'; di.value = t.date; di.style.marginTop = '8px';
+      const del = document.createElement('button'); del.className = 'delBtn'; del.textContent = 'حذف المحطة';
+      ti.addEventListener('input', () => { t.title = ti.value; view.querySelector('.tl-title').textContent = t.title || '…'; scheduleSave(); });
+      di.addEventListener('input', () => { t.date = di.value; view.querySelector('.tl-date').textContent = '📅 ' + t.date; scheduleSave(); });
+      del.addEventListener('click', () => { DATA.timeline = DATA.timeline.filter(x => x.id !== t.id); renderTl(); scheduleSave(); });
+      tools.append(ti, di, del); d.appendChild(tools);
+    }
+    w.appendChild(d);
+  });
+}
+$('addTl').addEventListener('click', () => {
+  if (DATA.timeline.length >= StoryState.listLimits.timeline) { showSave('الحد الأقصى 60 محطة', true); return; }
+  DATA.timeline.push({ id: nextId(DATA.timeline), title: 'محطة جديدة ❤', date: new Date().toISOString().slice(0, 10) });
+  renderTl(); scheduleSave();
+  $('tlWrap').lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+/* ---------- الرسايل ---------- */
+function syncMessageComposer() {
+  const locked = DATA.messagesRequireEditPassword !== false && !(EDITPASS && state.editMode);
+  $('unlockMessages').hidden = !locked;
+  $('messageWriter').hidden = locked;
+  $('messagesRequireEditPassword').checked = DATA.messagesRequireEditPassword !== false;
+}
+function openMessageWriter() {
+  if (!EDITPASS) { state.afterAuth = 'message'; openEditPrompt(); return; }
+  setEditMode(true);
+  $('messagesSec').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  $('msgInput').focus({ preventScroll: true });
+}
+$('unlockMessages').addEventListener('click', openMessageWriter);
+$('messagesRequireEditPassword').addEventListener('change', async event => {
+  if (!EDITPASS) { syncMessageComposer(); return; }
+  const input = event.target;
+  DATA.messagesRequireEditPassword = input.checked;
+  input.disabled = true;
+  $('messageSettingHint').textContent = 'جاري الحفظ…';
+  syncMessageComposer();
+  const saved = await saveNow('تم تغيير إعداد الرسائل ✔');
+  if (!saved && !pendingConflict && !authExpired) {
+    DATA.messagesRequireEditPassword = savedContent === null
+      || JSON.parse(savedContent).messagesRequireEditPassword !== false;
+    syncMessageComposer();
+  }
+  $('messageSettingHint').textContent = saved ? 'تم التغيير ✔' : 'الإعداد لم يُحفظ — اتأكد من النت وحاول تاني';
+  input.disabled = false;
+});
+function renderMsgs() {
+  syncMessageComposer();
+  const w = $('msgWrap'); w.innerHTML = '';
+  DATA.messages.forEach(m => {
+    const side = sideOf(m.from);
+    const div = document.createElement('div'); div.className = 'msg ' + side;
+    const who = document.createElement('span'); who.className = 'who';
+    who.textContent = side === 'him' ? DATA.himName : DATA.herName;
+    const text = document.createElement('span'); text.className = 'txt'; text.textContent = m.text;
+    div.append(who, text);
+    if (EDITPASS && state.editMode) {
+      const actions = document.createElement('div'); actions.className = 'msgActions';
+      const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'msgAction';
+      edit.title = 'تعديل الرسالة'; edit.setAttribute('aria-label', 'تعديل الرسالة'); edit.textContent = '✎';
+      edit.addEventListener('click', () => editMsg(m.id, div));
+      const del = document.createElement('button'); del.type = 'button'; del.className = 'msgAction delete';
+      del.title = 'حذف الرسالة'; del.setAttribute('aria-label', 'حذف الرسالة'); del.textContent = '🗑';
+      del.addEventListener('click', () => deleteMsg(m.id));
+      actions.append(edit, del); div.appendChild(actions);
+    }
+    w.appendChild(div);
+  });
+}
+const pendingMessageChanges = new Set();
+function applySavedMessages(result) {
+  if (result.ok !== true || !Array.isArray(result.messages)) throw new Error('invalid_response');
+  DATA.messages = result.messages;
+  renderMsgs();
+}
+function messageError(error) {
+  if (error.message === 'messages_limit') return 'وصلتم للحد الأقصى: 120 رسالة. احذفوا رسالة من وضع التعديل الأول.';
+  if (error.message === 'too_many_messages') return 'رسائل كتير في وقت قصير — استنوا شوية وجربوا تاني.';
+  if (error.message === 'invalid_message') return 'اكتبوا رسالة من حرف واحد لحد 2000 حرف.';
+  if (error.message === 'site_password_required') return 'جلسة فتح الموقع انتهت — انسخوا الرسالة وافتحوا الموقع من جديد.';
+  return 'الحفظ لم يكتمل — اتأكدوا من النت وجربوا تاني.';
+}
+async function deleteMsg(id) {
+  if (!EDITPASS || !state.editMode || pendingMessageChanges.has(id)) return;
+  const message = DATA.messages.find(item => item.id === id); if (!message) return;
+  if (!confirm('متأكد إنك عايز تحذف الرسالة دي؟')) return;
+  pendingMessageChanges.add(id);
+  try {
+    const result = await api(`/api/story/${SLUG}/messages/${encodeURIComponent(id)}`, {}, 'DELETE');
+    applySavedMessages(result); showSave('تم حذف الرسالة ✔');
+  } catch (error) { showSave(messageError(error), true); }
+  finally { pendingMessageChanges.delete(id); }
+}
+function editMsg(id, div) {
+  if (!EDITPASS || !state.editMode) return;
+  const m = DATA.messages.find(x => x.id === id); if (!m || div.dataset.editing) return;
+  div.dataset.editing = '1';
+  const whoText = div.querySelector('.who').textContent;
+  const who = document.createElement('span'); who.className = 'who'; who.textContent = whoText;
+  const ta = document.createElement('textarea'); ta.value = m.text; ta.maxLength = 2000;
+  const save = document.createElement('button'); save.className = 'saveMini'; save.textContent = 'حفظ';
+  const cancel = document.createElement('button'); cancel.className = 'cancelMini'; cancel.textContent = 'إلغاء';
+  const del = document.createElement('button'); del.className = 'deleteMini'; del.textContent = 'حذف';
+  const actions = document.createElement('div'); actions.className = 'msgEditActions'; actions.append(save, cancel, del);
+  div.replaceChildren(who, ta, actions);
+  ta.focus();
+  save.addEventListener('click', async () => {
+    if (pendingMessageChanges.has(id)) return;
+    const text = ta.value.trim();
+    if (!text) { showSave('اكتبوا الرسالة الأول', true); return; }
+    pendingMessageChanges.add(id); save.disabled = true;
+    try {
+      const result = await api(`/api/story/${SLUG}/messages/${encodeURIComponent(id)}`, { text }, 'PUT');
+      applySavedMessages(result); showSave('تم حفظ الرسالة ✔');
+    } catch (error) { showSave(messageError(error), true); }
+    finally { pendingMessageChanges.delete(id); save.disabled = false; }
+  });
+  cancel.addEventListener('click', renderMsgs);
+  del.addEventListener('click', () => deleteMsg(id));
+}
+$('whoHim').addEventListener('click', () => setSender('him'));
+$('whoHer').addEventListener('click', () => setSender('her'));
+$('sendMsg').addEventListener('click', async () => {
+  if (state.messageSending) return;
+  if (DATA.messagesRequireEditPassword !== false && !(EDITPASS && state.editMode)) {
+    openMessageWriter(); return;
+  }
+  const original = $('msgInput').value;
+  const text = original.trim();
+  if (!text) { $('messageHint').textContent = 'اكتبوا الرسالة الأول'; return; }
+  state.messageSending = true; $('sendMsg').disabled = true;
+  $('messageHint').textContent = 'جاري الإرسال…';
+  try {
+    const result = await api(`/api/story/${SLUG}/messages`, { text, from: sideOf(state.sender) });
+    applySavedMessages(result);
+    if ($('msgInput').value === original) $('msgInput').value = '';
+    $('messageHint').textContent = 'تم إرسال الرسالة ✔';
+    $('msgWrap').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (error) {
+    if (error.message === 'edit_password_required') {
+      EDITPASS = false; DATA.messagesRequireEditPassword = true;
+      $('messageHint').textContent = 'سجّلوا دخول التعديل لإرسال الرسالة — النص لسه موجود.';
+      syncMessageComposer(); openMessageWriter();
+    } else { $('messageHint').textContent = messageError(error); }
+  } finally { state.messageSending = false; $('sendMsg').disabled = false; }
+});
+
+/* ---------- الذكريات ---------- */
+/* ضغط الصور قبل الرفع مع الحفاظ على المقاس والجودة المناسبة للموبايل */
+async function compressImage(file) {
+  const compressor = window.ImageCompression;
+  if (!compressor || !compressor.isCompressibleImage(file)) return file;
+
+  showSave('بنجهّز الصورة ' + (file.name || '') + '…');
+  return compressor.compress(file, { maxDimension: 2048, quality: 0.88 });
+}
+
+/* الرفع: بيضغط الصورة الأول لو صورة، وبعدين يبعتها */
+let mediaUploadInProgress = false;
+async function uploadFile(file) {
+  if (mediaUploadInProgress) {
+    showSave('استنى لحد ما رفع الملف الحالي يخلص', true);
+    return null;
+  }
+  mediaUploadInProgress = true;
+  syncMemoryControls();
+  try {
+    const prepared = await compressImage(file);
+    return await sendFile(prepared);
+  } catch (error) {
+    showSave(error && error.message === 'image_format_unsupported'
+      ? 'المتصفح مقدرش يجهّز صيغة الصورة دي — اختار JPG أو PNG أو استخدم لقطة شاشة'
+      : 'مقدرناش نجهّز الصورة — جرّب صورة تانية', true);
+    return null;
+  } finally {
+    mediaUploadInProgress = false;
+    syncMemoryControls();
+  }
+}
+
+const UPLOAD_ERROR_MESSAGES = {
+  file_too_large: 'الملف كبير أوي — اختار ملف أصغر',
+  unsupported_file_type: 'نوع الملف مش مدعوم',
+  no_file: 'مفيش ملف اتبعت',
+  gift_storage_quota_exceeded: 'مساحة الهدية امتلأت — امسح صور أو أغاني قديمة وجرب تاني',
+  storage_quota_exceeded: 'مساحة التخزين امتلأت — امسح ملفات قديمة وجرب تاني',
+  upload_storage_quota_exceeded: 'مساحة التخزين امتلأت — امسح ملفات قديمة وجرب تاني',
+  too_many_files: 'عدد الملفات المرفوعة كبير — اختار صور أقل وجرب تاني',
+  upload_file_count_exceeded: 'عدد الملفات المرفوعة كبير — امسح ملفات قديمة وجرب تاني',
+  invalid_file_content: 'الملف غير صالح أو امتداده مش مطابق لنوعه',
+  invalid_file_signature: 'الملف غير صالح أو امتداده مش مطابق لنوعه',
+  too_many_uploads: 'تم رفع ملفات كتير في وقت قصير — استنى دقيقة وجرب تاني'
+};
+
+function uploadErrorMessage(code, status) {
+  return UPLOAD_ERROR_MESSAGES[code] || (code && code !== 'upload_failed' ? code : ('الرفع فشل (' + status + ')'));
+}
+
+function sendFile(file) {
+  return new Promise(resolve => {
+    if (!EDITPASS) { showSave('محتاجين كلمة سر التعديل الأول', true); return resolve(null); }
+    if (!file || !file.size) { showSave('الملف مش مقروء — جرب تاني', true); return resolve(null); }
+    if (file.size > 25 * 1024 * 1024) {
+      showSave('الملف أكبر من ٢٥ ميجا 🙈 ابعت مقطع أقصر', true); return resolve(null);
+    }
+    const compressor = window.ImageCompression;
+    const uploadName = String(file.name || 'upload');
+    const uploadSize = compressor ? compressor.formatBytes(file.size) : (file.size + ' B');
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `/api/gifts/${SLUG}/admin/upload`);
+    xhr.timeout = 180000;
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) {
+        showSave('بنرفع ' + uploadName + ' (' + uploadSize + ')… ' + Math.round(e.loaded / e.total * 100) + '%', true);
+      }
+    };
+    xhr.onload = () => {
+      let j = {};
+      try { j = JSON.parse(xhr.responseText); } catch (e) { }
+      if (xhr.status === 200 && j.url) { showSave('اترفع ✔'); resolve(j.url); }
+      else { showSave(uploadErrorMessage(j.error, xhr.status), true); resolve(null); }
+    };
+    xhr.onerror   = () => { showSave('النت قطع أثناء الرفع 🙈 جرب تاني', true); resolve(null); };
+    xhr.ontimeout = () => { showSave('الرفع أخد وقت طويل — جرب مقطع أقصر', true); resolve(null); };
+    showSave('بنرفع ' + uploadName + ' (' + uploadSize + ')…', true);
+    const form = new FormData();
+    form.append('file', file, file.name || 'upload');
+    xhr.send(form);
+  });
+}
+function renderGiftBox() {
+  const g = $('giftBoxWrap'); g.innerHTML = '';
+  const gift = DATA.giftBox && typeof DATA.giftBox === 'object'
+    ? DATA.giftBox
+    : { caption: '', src: '' };
+  const stage = document.createElement('div'); stage.className = 'giftBoxStage';
+  const photo = document.createElement('div'); photo.className = 'giftPhoto';
+  if (gift.src) {
+    const img = document.createElement('img'); img.className = 'memImg'; img.src = gift.src;
+    img.alt = gift.caption || 'صورتنا المميزة'; photo.appendChild(img);
+  } else {
+    const ph = document.createElement('div'); ph.className = 'memImg ph';
+    const icon = document.createElement('i'); icon.textContent = '📷';
+    ph.append(icon, document.createTextNode('صورة المفاجأة هنا')); photo.appendChild(ph);
+  }
+  const cap = document.createElement('div'); cap.className = 'memCap';
+  cap.textContent = gift.caption || 'ذكرى من القلب ❤'; photo.appendChild(cap);
+
+  const box = document.createElement('button'); box.className = 'giftBoxButton'; box.type = 'button';
+  box.setAttribute('aria-label', 'افتح صندوق المفاجأة'); box.setAttribute('aria-expanded', 'false');
+  const lid = document.createElement('span'); lid.className = 'giftBoxLid'; lid.setAttribute('aria-hidden', 'true');
+  const base = document.createElement('span'); base.className = 'giftBoxBase'; base.setAttribute('aria-hidden', 'true');
+  box.append(lid, base);
+  const burst = document.createElement('div'); burst.className = 'boxHeartBurst'; burst.setAttribute('aria-hidden', 'true');
+  box.addEventListener('click', () => openGiftBox(stage, box, burst));
+  stage.append(photo, box, burst); g.appendChild(stage);
+
+  if (state.editMode) {
+    const tools = document.createElement('div'); tools.className = 'memTools boxTools';
+    const lab = document.createElement('label'); lab.className = 'pick';
+    lab.textContent = gift.src ? '📷 تغيير صورة الصندوق' : '📷 اختاروا صورة الصندوق';
+    const f = document.createElement('input'); f.type = 'file'; f.accept = 'image/*,.jpg,.jpeg,.png,.webp,.heic';
+    lab.appendChild(f);
+    const ci = document.createElement('input'); ci.className = 'eInput'; ci.value = gift.caption || '';
+    ci.placeholder = 'الكلام اللي يظهر تحت الصورة…'; ci.maxLength = 500;
+    const del = document.createElement('button'); del.className = 'delBtn'; del.textContent = 'حذف صورة الصندوق';
+    del.style.display = gift.src || gift.caption ? 'inline-block' : 'none';
+    f.addEventListener('change', async e => {
+      const file = e.target.files[0]; if (!file) return;
+      const url = await uploadFile(file);
+      if (url) {
+        const currentGift = DATA.giftBox && typeof DATA.giftBox === 'object' ? DATA.giftBox : gift;
+        DATA.giftBox = { caption: currentGift.caption || '', src: url };
+        renderGiftBox(); scheduleSave();
+        requestAnimationFrame(() => {
+          const nextStage = $('giftBoxWrap').querySelector('.giftBoxStage');
+          const nextBox = $('giftBoxWrap').querySelector('.giftBoxButton');
+          const nextBurst = $('giftBoxWrap').querySelector('.boxHeartBurst');
+          if (nextStage && nextBox && nextBurst) openGiftBox(nextStage, nextBox, nextBurst);
+        });
+      }
+    });
+    ci.addEventListener('input', () => {
+      const currentGift = DATA.giftBox && typeof DATA.giftBox === 'object' ? DATA.giftBox : gift;
+      DATA.giftBox = { caption: ci.value, src: currentGift.src || '' };
+      cap.textContent = ci.value || 'ذكرى من القلب ❤'; scheduleSave();
+    });
+    del.addEventListener('click', () => {
+      DATA.giftBox = { caption: '', src: '' };
+      renderGiftBox(); scheduleSave();
+    });
+    tools.append(lab, ci, del); g.appendChild(tools);
+  }
+}
+function syncMemoryControls() {
+  const full = DATA.memories.length >= StoryState.listLimits.memories;
+  $('addMemBtn').disabled = full || mediaUploadInProgress;
+  $('memFile').disabled = full || mediaUploadInProgress || !EDITPASS || !state.editMode;
+}
+function renderMems() {
+  syncMemoryControls();
+  const g = $('memGrid'); g.innerHTML = '';
+  DATA.memories.forEach(memory => {
+    const card = document.createElement('div'); card.className = 'memCard';
+    if (memory.src) {
+      const img = document.createElement('img'); img.className = 'memImg';
+      img.loading = 'lazy'; img.decoding = 'async'; img.src = memory.src;
+      img.alt = memory.caption || 'صورة من ذكرياتنا'; card.appendChild(img);
+    } else {
+      const ph = document.createElement('div'); ph.className = 'memImg ph';
+      const icon = document.createElement('i'); icon.textContent = '📷';
+      ph.append(icon, document.createTextNode('صورتكم هنا')); card.appendChild(ph);
+    }
+    const cap = document.createElement('div'); cap.className = 'memCap';
+    cap.textContent = memory.caption || '❤'; card.appendChild(cap);
+    if (state.editMode) {
+      const tools = document.createElement('div'); tools.className = 'memTools';
+      const lab = document.createElement('label'); lab.className = 'pick';
+      lab.textContent = '📷 تغيير الصورة';
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file'; fileInput.accept = 'image/*,.jpg,.jpeg,.png,.webp,.heic';
+      lab.appendChild(fileInput);
+      const captionInput = document.createElement('input');
+      captionInput.className = 'eInput'; captionInput.value = memory.caption || '';
+      captionInput.maxLength = 500;
+      captionInput.placeholder = 'الكلام اللي تحت الصورة…';
+      captionInput.setAttribute('aria-label', 'الكلام اللي تحت الصورة — بيتحفظ تلقائيًا');
+      const hint = document.createElement('div'); hint.className = 'hint';
+      hint.textContent = 'الكلام بيتحفظ تلقائيًا بعد ما تخلصوا كتابة';
+      const del = document.createElement('button'); del.className = 'delBtn'; del.textContent = 'حذف الذكرى';
+      fileInput.addEventListener('change', async event => {
+        const file = event.target.files[0]; if (!file || mediaUploadInProgress) return;
+        const url = await uploadFile(file);
+        event.target.value = '';
+        // A save/merge or deletion may have replaced the original object while uploading.
+        const current = DATA.memories.find(item => item.id === memory.id);
+        if (url && current) { current.src = url; renderMems(); await saveNow('تم حفظ الصورة تلقائيًا ✔'); }
+      });
+      captionInput.addEventListener('input', () => {
+        const current = DATA.memories.find(item => item.id === memory.id);
+        if (!current) return;
+        current.caption = captionInput.value; cap.textContent = current.caption || '❤'; scheduleSave();
+      });
+      captionInput.addEventListener('blur', () => { if (storySaveSnapshot() !== savedContent) void saveNow(); });
+      del.addEventListener('click', () => {
+        DATA.memories = DATA.memories.filter(item => item.id !== memory.id);
+        renderMems(); scheduleSave();
+      });
+      tools.append(lab, captionInput, hint, del); card.appendChild(tools);
+    }
+    g.appendChild(card);
+  });
+}
+function openGiftBox(stage, box, burst) {
+  if (stage.classList.contains('open')) return;
+  stage.classList.add('open'); box.classList.add('open');
+  box.setAttribute('aria-expanded', 'true'); box.setAttribute('aria-label', 'صندوق المفاجأة مفتوح');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const hearts = ['❤', '♥', '♡', '💕'];
+  for (let i = 0; i < 28; i++) {
+    const heart = document.createElement('span'); heart.className = 'boxHeart';
+    heart.textContent = hearts[i % hearts.length];
+    const direction = i % 2 ? 1 : -1;
+    heart.style.setProperty('--heart-x', (direction * (28 + Math.random() * 145)) + 'px');
+    heart.style.setProperty('--heart-y', (-90 - Math.random() * 245) + 'px');
+    heart.style.setProperty('--heart-r', (-70 + Math.random() * 140) + 'deg');
+    heart.style.setProperty('--heart-size', (10 + Math.random() * 13) + 'px');
+    heart.style.setProperty('--heart-delay', (Math.random() * .42) + 's');
+    heart.style.color = i % 3 === 0 ? '#c97867' : (i % 3 === 1 ? '#e7a7a0' : '#b86a5b');
+    burst.appendChild(heart);
+  }
+  setTimeout(() => burst.replaceChildren(), 3100);
+}
+$('addMemBtn').addEventListener('click', event => {
+  event.preventDefault();
+  // Some mobile WebViews can replay a tap after returning from the edit
+  // prompt. Stop duplicate listeners from toggling the form open then closed.
+  event.stopImmediatePropagation();
+  if (DATA.memories.length >= StoryState.listLimits.memories) { showSave('وصلتم للحد الأقصى: 80 صورة. احذفوا ذكرى لإضافة صورة جديدة.', true); return; }
+  if (!EDITPASS || authExpired) {
+    state.afterAuth = 'memory';
+    openEditPrompt();
+    return;
+  }
+  openMemoryEditor();
+});
+$('memFile').addEventListener('change', async e => {
+  if (!EDITPASS || !state.editMode || authExpired || mediaUploadInProgress
+    || DATA.memories.length >= StoryState.listLimits.memories) return;
+  const f = e.target.files[0]; if (!f) return;
+  const url = await uploadFile(f);
+  e.target.value = ''; // Allow retrying the same file after a failed upload.
+  if (!url) return;
+  if (DATA.memories.length >= StoryState.listLimits.memories) {
+    showSave('وصلتم للحد الأقصى: 80 صورة. الصورة المرفوعة لم تُضف للذكريات.', true); return;
+  }
+  DATA.memories.push({ id: nextId(DATA.memories), caption: '', src: url });
+  $('memForm').classList.remove('show');
+  $('addMemBtn').setAttribute('aria-expanded', 'false');
+  renderMems();
+  const card = $('memGrid').lastElementChild;
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Uploading the file is not enough: persist its reference immediately, without a save button.
+  await saveNow('تم حفظ الصورة تلقائيًا ✔');
+});
+
+/* ---------- تعديلات الهيدر والأغنية ---------- */
+$('editHim').addEventListener('input', e => { DATA.himName = e.target.value || 'هو'; applyNames(); renderMsgs(); scheduleSave(); });
+$('editHer').addEventListener('input', e => { DATA.herName = e.target.value || 'هي'; applyNames(); renderMsgs(); scheduleSave(); });
+$('editEnvelopeTopText').addEventListener('input', e => {
+  DATA.envelopeTopText = e.target.value; applyCustomCopy(); scheduleSave();
+});
+$('editEnvelopeName').addEventListener('input', e => {
+  DATA.envelopeName = e.target.value; applyCustomCopy(); scheduleSave();
+});
+$('editEnvelopeEmoji').addEventListener('input', e => {
+  DATA.envelopeEmoji = e.target.value.trim() || '❤'; applyCustomCopy(); scheduleSave();
+});
+$('saveOpenPassword').addEventListener('click', async () => {
+  const input = $('editOpenPassword');
+  const password = input.value.trim();
+  if (!password) {
+    $('openPasswordHint').textContent = 'اكتب كلمة السر الجديدة الأول';
+    input.focus();
+    return;
+  }
+  $('openPasswordHint').textContent = 'بنحفظ كلمة السر…';
+  try {
+    const result = await api(`/api/story/${SLUG}/open-password`, { password });
+    OPEN_PASSWORD = result.password || password;
+    input.value = OPEN_PASSWORD;
+    $('openPasswordHint').textContent = 'تم التغيير ✔';
+    showSave('تم تغيير كلمة سر الفتح ✔');
+  } catch (error) {
+    $('openPasswordHint').textContent = 'الحفظ مانجحش — جرّب كلمة سر تانية';
+  }
+});
+$('editOpenPassword').addEventListener('keydown', event => {
+  if (event.key === 'Enter') { event.preventDefault(); $('saveOpenPassword').click(); }
+});
+$('saveEditPassword').addEventListener('click', async () => {
+  const input = $('editEditPassword');
+  const password = input.value.trim();
+  if (password.length < 6) {
+    $('editPasswordHint').textContent = 'كلمة سر التعديل لازم تكون 6 حروف أو أرقام على الأقل';
+    input.focus();
+    return;
+  }
+  $('editPasswordHint').textContent = 'بنحفظ كلمة السر…';
+  try {
+    const result = await api(`/api/gifts/${SLUG}/admin/password`, { password });
+    EDIT_PASSWORD = result.password || password;
+    input.value = EDIT_PASSWORD;
+    $('editPasswordHint').textContent = 'تم التغيير ✔';
+    showSave('تم تغيير كلمة سر التعديل ✔');
+  } catch (error) {
+    $('editPasswordHint').textContent = 'الحفظ مانجحش — جرّب كلمة سر من 6 حروف أو أرقام على الأقل';
+  }
+});
+$('editEditPassword').addEventListener('keydown', event => {
+  if (event.key === 'Enter') { event.preventDefault(); $('saveEditPassword').click(); }
+});
+$('editHeroTitle').addEventListener('input', e => {
+  DATA.heroTitle = e.target.value; applyCustomCopy(); scheduleSave();
+});
+$('editHeroSubtitle').addEventListener('input', e => {
+  DATA.heroSubtitle = e.target.value; applyCustomCopy(); scheduleSave();
+});
+$('editGiftBoxTitle').addEventListener('input', e => {
+  DATA.giftBoxTitle = e.target.value; applyCustomCopy(); scheduleSave();
+});
+$('editCounterCaption').addEventListener('input', e => {
+  DATA.counterCaption = e.target.value; applyCustomCopy(); scheduleSave();
+});
+function flipRecipient(r) { DATA.recipient = r; applyGender(); applyNames(); setSender(state.sender); renderMsgs(); scheduleSave(); }
+$('recHer').addEventListener('click', () => flipRecipient('her'));
+$('recHim').addEventListener('click', () => flipRecipient('him'));
+$('editStart').addEventListener('input', e => { if (e.target.value) { DATA.startDate = e.target.value; tick(); scheduleSave(); } });
+$('reopenLetter').addEventListener('click', () => { openLetter(0, 'editor'); letterEdit(true); });
+$('editSongTitle').addEventListener('input', e => {
+  DATA.songTitle = e.target.value || 'أغنيتنا ❤';
+  $('songTitle').textContent = DATA.songTitle; scheduleSave();
+});
+$('songFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  songHint('بنرفع الأغنية…');
+  const url = await uploadFile(f);
+  if (url) { DATA.songClip = url; applySong(); songHint('الأغنية اتحفظت ❤ دوسوا ▶'); scheduleSave(); }
+  else songHint('الرفع مانجحش — بصوا على الرسالة اللي فوق');
+});
+$('autoplayChk').addEventListener('change', e => { DATA.songAutoplay = e.target.checked; scheduleSave(); });
+$('clearClip').addEventListener('click', () => {
+  DATA.songClip = ''; applySong(); songHint(''); $('songFile').value = ''; scheduleSave();
+});
+$('saveSong').addEventListener('click', () => {
+  const url = $('editSongUrl').value.trim(), id = parseYT(url);
+  if (url && !id) { songHint('اللينك مش من يوتيوب 🙈 انسخوه من زرار الشير'); return; }
+  DATA.songUrl = url; songHint(id ? 'اتحفظ اللينك ❤' : '');
+  if (id && !state.clipSet) { loadYTApi(); if (window.YT && YT.Player) buildPlayer(id); }
+  syncSongSec(); scheduleSave();
+});
+$('playBtn').addEventListener('click', () => {
+  if (state.clipSet) {
+    if (audioEl.paused) audioEl.play().then(() => setBarPlaying(true)).catch(() => setBarPlaying(false));
+    else { audioEl.pause(); setBarPlaying(false); }
+    return;
+  }
+  if (state.playerReady && state.player) {
+    const st = state.player.getPlayerState();
+    if (st === 1) state.player.pauseVideo(); else state.player.playVideo();
+    return;
+  }
+  const id = parseYT(DATA.songUrl);
+  if (id) { loadYTApi(); if (window.YT && YT.Player) buildPlayer(id); }
+});
+
+/* ---------- تشغيل الصفحة بعد ما البيانات توصل ---------- */
+function boot() {
+  DATA.timeline = DATA.timeline || []; DATA.messages = DATA.messages || []; DATA.memories = DATA.memories || [];
+  DATA.letterEmojis = Array.isArray(DATA.letterEmojis) ? DATA.letterEmojis : [];
+  DATA.letterPages.forEach((_, index) => {
+    if (!DATA.letterEmojis[index]) DATA.letterEmojis[index] = EMOJIS[index % EMOJIS.length];
+  });
+  if (!DATA.giftBox || typeof DATA.giftBox !== 'object') DATA.giftBox = { caption: '', src: '' };
+  DATA.timeline.forEach((t, i) => t.id = t.id || i + 1);
+  DATA.messages.forEach((m, i) => m.id = m.id || i + 1);
+  DATA.memories.forEach((m, i) => m.id = m.id || i + 1);
+  applyNames(); applyCustomCopy(); applyGender(); setSender('maker');
+  $('editHim').value = DATA.himName; $('editHer').value = DATA.herName;
+  $('editEnvelopeTopText').value = DATA.envelopeTopText || 'A letter for';
+  $('editEnvelopeName').value = DATA.envelopeName || '';
+  $('editEnvelopeEmoji').value = DATA.envelopeEmoji || '❤';
+  $('editOpenPassword').value = OPEN_PASSWORD;
+  $('openPasswordHint').textContent = '';
+  $('editEditPassword').value = EDIT_PASSWORD;
+  $('editPasswordHint').textContent = '';
+  $('editHeroTitle').value = DATA.heroTitle || 'Our Story';
+  $('editHeroSubtitle').value = DATA.heroSubtitle || 'المكان الصغير اللي بيجمع حكايتنا ❤';
+  $('editCounterCaption').value = DATA.counterCaption || 'كل ثانية بتعدي وانت في قلبي ❤';
+  $('editGiftBoxTitle').value = DATA.giftBoxTitle || 'مفاجأة صغيرة';
+  $('editStart').value = (DATA.startDate || '').slice(0, 16);
+  $('editSongTitle').value = DATA.songTitle || '';
+  $('editSongUrl').value = DATA.songUrl || '';
+  $('autoplayChk').checked = !!DATA.songAutoplay;
+  applySong(); tick(); renderTl(); renderMsgs(); renderGiftBox(); renderMems();
+  if (parseYT(DATA.songUrl) && !state.clipSet) loadYTApi();
+}
+
+/* ---------- البداية ---------- */
+for (const [id, field] of Object.entries({ editHim: 'himName', editHer: 'herName',
+  editEnvelopeTopText: 'envelopeTopText', editEnvelopeName: 'envelopeName', editHeroTitle: 'heroTitle',
+  editHeroSubtitle: 'heroSubtitle', editCounterCaption: 'counterCaption', editGiftBoxTitle: 'giftBoxTitle',
+  editSongTitle: 'songTitle', editSongUrl: 'songUrl' })) $(id).maxLength = StoryState.textLimits[field];
+async function initStory() {
+  if ($('retryInit').disabled) return;
+  $('retryInit').disabled = true;
+  try {
+    const m = await api(`/api/story/${SLUG}/meta`, null, 'GET');
+    META = m;
+    applyEditButtonPlacement();
+    DATA = {
+      recipient: m.recipient,
+      envelopeTopText: m.envelopeTopText,
+      envelopeName: m.envelopeName || m.recipientName,
+      envelopeEmoji: m.envelopeEmoji || '❤',
+      letterEmojis: [m.letterEmoji || '😍'],
+      letterPages: Array.isArray(m.letterPages) && m.letterPages.length ? m.letterPages : ['رسالة صغيرة من القلب ❤']
+    };
+    applyCustomCopy();
+    applyGender();
+    $('editFab').classList.add('show');
+    $('retryInit').hidden = true;
+  } catch (e) {
+    $('tapHint').textContent = e.status === 404 ? 'الهدية دي مش موجودة 🙈' : RequestJSON.message(e);
+    $('retryInit').hidden = e.status === 404;
+  } finally { $('retryInit').disabled = false; }
+}
+$('retryInit').addEventListener('click', initStory);
+initStory();
+
+</script>
+</body>
+</html>
